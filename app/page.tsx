@@ -1,4 +1,4 @@
-'use client';
+export const dynamic = 'auto'
 import getCurrentUser from './actions/getCurrentUser';
 import getListings, { 
     IListingsParams
