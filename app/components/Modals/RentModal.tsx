@@ -68,7 +68,7 @@ const RentModal = () => {
     // 引入地圖元件
     const Map = useMemo(() => dynamic(() => import('../Map'),{
         ssr: false
-    }), [location]);
+    }), []);
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
