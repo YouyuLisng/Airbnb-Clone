@@ -1,4 +1,4 @@
-export const dynamic = 'auto'
+
 import getCurrentUser from './actions/getCurrentUser';
 import getListings, { 
     IListingsParams
@@ -7,6 +7,9 @@ import ClientOnly from './components/ClientOnly'
 import Container from './components/Container'
 import EmptyState from './components/EmptyState';
 import ListingCard from './components/Listings/ListingCard';
+
+export const dynamic = 'auto'
+export const dynamicParams = true // true | false,
 
 interface HomeProps {
     searchParams: IListingsParams
