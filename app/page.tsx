@@ -8,7 +8,7 @@ import Container from './components/Container'
 import EmptyState from './components/EmptyState';
 import ListingCard from './components/Listings/ListingCard';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic' // 部署會遇到 Error: Dynamic server usage: searchParams.userId
 
 interface HomeProps {
     searchParams: IListingsParams
