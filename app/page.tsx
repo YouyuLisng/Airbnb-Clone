@@ -8,8 +8,7 @@ import Container from './components/Container'
 import EmptyState from './components/EmptyState';
 import ListingCard from './components/Listings/ListingCard';
 
-export const dynamic = 'auto'
-export const dynamicParams = true // true | false,
+export const dynamic = 'force-dynamic'
 
 interface HomeProps {
     searchParams: IListingsParams
