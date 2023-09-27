@@ -1,4 +1,4 @@
-
+'use client';
 import getCurrentUser from './actions/getCurrentUser';
 import getListings, { 
     IListingsParams
