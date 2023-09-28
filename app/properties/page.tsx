@@ -3,7 +3,6 @@ import EmptyState from "../components/EmptyState";
 import ClientOnly from "../components/ClientOnly";
 
 import getCurrentUser from "../actions/getCurrentUser";
-import TripsClient from "./PropertiesClient";
 import getListings from "../actions/getListings";
 import PropertiesClient from "./PropertiesClient";
 
@@ -29,8 +28,8 @@ const PropertiesPage = async () => {
         return (
             <ClientOnly>
                 <EmptyState 
-                    title="沒有找到行程"
-                    subtitle="尋找看看你喜歡的行程！"
+                    title="目前您沒有上傳房源"
+                    subtitle="趕快上傳您的房源吧！"
                 />
             </ClientOnly>
         )

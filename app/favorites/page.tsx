@@ -7,7 +7,7 @@ import FavoritesCliect from "./FavoritesCliect";
 
 const favoritesPage = async () => {
     const currentUser = await getCurrentUser();
-    const listing = await getFavoritesListing();
+    const listings = await getFavoritesListing();
     if(!currentUser) {
         return(
             <ClientOnly>
@@ -19,7 +19,7 @@ const favoritesPage = async () => {
         )
     }
 
-    if(listing.length === 0) {
+    if(listings.length === 0) {
         <ClientOnly>
             <EmptyState
                 title="No favorites found"
@@ -27,10 +27,11 @@ const favoritesPage = async () => {
             />
         </ClientOnly>
     }
+    
     return (
         <ClientOnly>
             <FavoritesCliect 
-                listing={listing}
+                listings={listings}
                 currentUser={currentUser}
             />
         </ClientOnly>

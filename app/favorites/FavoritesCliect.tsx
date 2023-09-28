@@ -11,12 +11,12 @@ import toast from "react-hot-toast";
 
 
 interface FavoritesClientProps {
-    listing: SafeListing[],
+    listings: SafeListing[],
     currentUser?: SafeUser | null
 }
 
 const FavoritesClient: React.FC<FavoritesClientProps> = ({
-    listing,
+    listings,
     currentUser
 }) => {
     return (
@@ -26,7 +26,7 @@ const FavoritesClient: React.FC<FavoritesClientProps> = ({
                 subtitle="這裡是我的喜愛清單"
             />
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
-                {listing.map((listing: any) => (
+                {listings.map((listing: any) => (
                     <ListingCard
                         key={listing.id}
                         data={listing}
