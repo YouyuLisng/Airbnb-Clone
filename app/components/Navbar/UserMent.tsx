@@ -20,7 +20,7 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({
     currentUser
 }) => {
-    const rouetr = useRouter();
+    const router = useRouter();
     const registerModal = useRegisterModal();
     const loginModal = useLoginModal();
     const rentModal = useRentModal();
@@ -57,13 +57,13 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     <div className=' flex flex-col cursor-pointer'>
                         {currentUser ? (
                             <>
-                                <MenuItem onClick={() => rouetr.push('/trips')} label='我的旅程' />
-                                <MenuItem onClick={() => rouetr.push('/favorites')} label='我的收藏' />
-                                <MenuItem onClick={() => rouetr.push('/reservations')} label='我的房源預訂' />
-                                <MenuItem onClick={() => rouetr.push('/properties')} label='我的房源' />
+                                <MenuItem onClick={() => router.push('/trips')} label='我的旅程' />
+                                <MenuItem onClick={() => router.push('/favorites')} label='我的收藏' />
+                                <MenuItem onClick={() => router.push('/reservations')} label='我的房源預訂' />
+                                <MenuItem onClick={() => router.push('/properties')} label='我的房源' />
                                 <MenuItem onClick={rentModal.onOpen} label='在Airbnb發布房源' />
                                 <hr />
-                                <MenuItem onClick={() => signOut()} label='登出' />
+                                <MenuItem onClick={() => {signOut();router.push('/');}} label='登出' />
                             </>
                         ):(
                             <>
