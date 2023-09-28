@@ -1,36 +1,30 @@
-import EmptyState from "../components/EmptyState";
-import ClientOnly from "../components/ClientOnly";
 
-import getCurrentUser from "../actions/getCurrentUser";
-import getFavoritesListing from "../actions/getFavoriteListing";
-import FavoritesCliect from "./FavoritesCliect";
+import EmptyState from "@/app/components/EmptyState";
+import ClientOnly from "@/app/components/ClientOnly";
 
-const favoritesPage = async () => {
+import getCurrentUser from "@/app/actions/getCurrentUser";
+import getFavoriteListings from "@/app/actions/getFavoriteListing";
+
+import FavoritesClient from "./FavoritesCliect";
+
+const ListingPage = async () => {
+    const listings = await getFavoriteListings();
     const currentUser = await getCurrentUser();
-    const listings = await getFavoritesListing();
-    if(!currentUser) {
-        return(
+
+    if (listings.length === 0) {
+        return (
             <ClientOnly>
-                <EmptyState 
-                    title="Unauthorized"
-                    subtitle="請登入"
+                <EmptyState
+                title="No favorites found"
+                subtitle="Looks like you have no favorite listings."
                 />
             </ClientOnly>
-        )
+        );
     }
 
-    if(listings.length === 0) {
-        <ClientOnly>
-            <EmptyState
-                title="No favorites found"
-                subtitle="Looks like you have no reservations on your properties."
-            />
-        </ClientOnly>
-    }
-    
     return (
         <ClientOnly>
-            <FavoritesCliect 
+            <FavoritesClient
                 listings={listings}
                 currentUser={currentUser}
             />
@@ -38,4 +32,4 @@ const favoritesPage = async () => {
     );
 }
 
-export default favoritesPage;
+export default ListingPage;
