@@ -27,8 +27,8 @@ const ReservationPage = async () => {
         return (
             <ClientOnly>
                 <EmptyState
-                    title="No reservations found"
-                    subtitle="Looks like you have no reservations on your properties."
+                    title="目前沒有人預訂您的房源"
+                    subtitle="多多補充房源資訊或圖片來吸引客人吧！"
                 />
             </ClientOnly>
         );
