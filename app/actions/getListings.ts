@@ -86,7 +86,7 @@ export default async function getListings(
             }
         });
 
-        const safeListings = listings.map((listings) => ({
+        const safeListings = listings.map((listings: any) => ({
             ...listings,
             createdAt: listings.createdAt.toISOString()
         }));
