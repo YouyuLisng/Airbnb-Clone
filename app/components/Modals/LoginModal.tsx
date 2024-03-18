@@ -1,7 +1,6 @@
 'use client';
 "登入Modal"
 import { signIn } from "next-auth/react";
-import axios from "axios";
 import { AiFillGithub, AiFillApple } from "react-icons/ai";
 // import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
