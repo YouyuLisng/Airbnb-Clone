@@ -15,7 +15,6 @@ interface HomeProps {
 }
 
 const Home = async ({ searchParams } : HomeProps) => {
-    console.log(process.env.NEXTAUTH_SECRET, 'process.env.NEXTAUTH_SECRET')
     const listings = await getListings(searchParams);
     const currentUser = await getCurrentUser();
     if(listings.length === 0) {
