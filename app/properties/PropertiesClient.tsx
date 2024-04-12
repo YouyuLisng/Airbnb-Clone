@@ -4,9 +4,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { SafeListing, SafeUser } from "@/app/types";
-
 import Container from "../components/Container";
 import ListingCard from "../components/Listings/ListingCard";
 import Heading from "../components/Navbar/Heading";
