@@ -46,10 +46,10 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     在Airbnb發布房源
                 </div>
                 <div onClick={toggleOpen} className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">
-                    <AiOutlineMenu size={18} />
                     <div className='hidden md:block'>
                         <Avatar src={currentUser?.image} />
                     </div>
+                    <AiOutlineMenu size={18} />
                 </div>
             </div>
             {isOpen && (

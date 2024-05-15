@@ -1,10 +1,13 @@
 import type { NextAuthOptions } from "next-auth";
+import type { Adapter } from 'next-auth/adapters';
+import { PrismaAdapter } from "@auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GithubProvider from "next-auth/providers/github"
 import bcrypt from "bcrypt"
 import prisma from "@/app/libs/prismadb"
 
 export const options: NextAuthOptions = {
+    adapter: PrismaAdapter(prisma) as Adapter,
     providers: [
         // 快速登入
         GithubProvider({
