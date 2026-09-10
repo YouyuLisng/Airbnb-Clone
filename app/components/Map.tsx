@@ -1,48 +1,30 @@
 "use client"; // 地圖
 
 import { useEffect, useRef } from 'react';
-import { MapLibreMap, Marker, NavigationControl } from 'maplibre-gl';
+import { MapLibreMap, Marker, NavigationControl, setWorkerUrl, getVersion } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { BiMapPin } from 'react-icons/bi';
 
-// OpenTopoMap's elevation-shaded terrain tiles read as too busy/"realistic"
-// against the rest of GearShare's flat, minimal UI. Esri's "Light Gray
-// Canvas" basemap (light gray, thin roads, minimal labels, genuinely
-// keyless) is a much cleaner fit. Two things were tried and ruled out
-// first: an OpenFreeMap vector build of CARTO's Positron style rendered
-// as a blank canvas under headless Chromium's software WebGL fallback
-// (loaded fine, just never visibly painted, so it couldn't be verified);
-// CARTO's own basemaps.cartocdn.com raster tiles now silently serve an
-// "API KEY REQUIRED" watermark instead of actually erring on
-// unauthenticated requests. Esri's tiles are plain raster (same proven
-// rendering path as the earlier OpenTopoMap version) and need no key.
-const esriTileUrl = (service: string) =>
-    // Esri's tile REST API addresses tiles as z/y/x, not the usual z/x/y.
-    `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${service}/MapServer/tile/{z}/{y}/{x}`;
+// Esri's Light Gray Canvas (the previous version of this file) rendered
+// reliably but came across as flat/lifeless once it was actually in the
+// UI. OpenFreeMap's hosted "Liberty" style (OSM Liberty -- free, no API
+// key, no rate limit) has the requested palette: cream/beige roads,
+// grass-green parks, light blue water, light grayish-brown built-up
+// areas, dark gray labels -- and it stacks each place name's local
+// script (e.g. 臺北市) with the latin name, so Chinese place names show
+// up directly rather than being an afterthought.
+const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 
-const lightGrayStyle = {
-    version: 8 as const,
-    sources: {
-        base: {
-            type: 'raster' as const,
-            tiles: [esriTileUrl('World_Light_Gray_Base')],
-            tileSize: 256,
-            attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-        },
-        // Place-name labels, roads, and borders as a separate transparent
-        // overlay -- this is how Esri's Light Gray Canvas is meant to be
-        // composited (base + reference).
-        reference: {
-            type: 'raster' as const,
-            tiles: [esriTileUrl('World_Light_Gray_Reference')],
-            tileSize: 256,
-        },
-    },
-    layers: [
-        { id: 'base', type: 'raster' as const, source: 'base' },
-        { id: 'reference', type: 'raster' as const, source: 'reference' },
-    ],
-};
+// MapLibre loads/decodes vector tiles in a Web Worker, constructed via a
+// Blob that does `import(new URL('./maplibre-gl-worker.mjs',
+// import.meta.url))`. Under Turbopack that URL doesn't resolve to a
+// servable path, so the worker crashes immediately (created, then closed,
+// with no visible error) and zero tile requests are ever made -- the
+// style/sprite requests (main thread) still succeed, so the background
+// color paints but no roads/parks/water/labels ever show up. Pointing
+// setWorkerUrl at the same version's worker bundle on a CDN sidesteps
+// Turbopack's bundling of it entirely.
+setWorkerUrl(`https://unpkg.com/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`);
 
 // A brand-colored pin built from inline SVG for the marker's DOM element.
 const PIN_SVG = `
@@ -82,7 +64,7 @@ const Map: React.FC<MapProps> = ({
 
             const map = new MapLibreMap({
                 container: containerRef.current,
-                style: lightGrayStyle,
+                style: MAP_STYLE_URL,
                 center: lngLat,
                 zoom: 10,
                 scrollZoom: false,
@@ -96,12 +78,10 @@ const Map: React.FC<MapProps> = ({
                 .setLngLat(lngLat)
                 .addTo(map);
 
-            // The map is created while it's inside an animating modal
-            // (Modal.tsx scales/translates in over ~300ms), so the
-            // container's on-screen size when the WebGL canvas is first
-            // sized can be stale -- MapLibre doesn't watch for that on its
-            // own. Without this it renders as a blank canvas until
-            // something else happens to trigger a resize.
+            // Defensive: MapLibre doesn't watch its container for size
+            // changes on its own, so if this ever ends up mounted while
+            // its container is still settling into its final layout size
+            // (e.g. modal transitions), this keeps the canvas in sync.
             const resizeObserver = new ResizeObserver(() => map.resize());
             resizeObserver.observe(containerRef.current);
             resizeObserverRef.current = resizeObserver;
