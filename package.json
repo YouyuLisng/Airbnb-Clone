@@ -12,6 +12,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test"
   },
+  "prisma": {
+    "seed": "node prisma/seed.ts"
+  },
   "overrides": {
     "@auth/core": "^0.41.3"
   },
