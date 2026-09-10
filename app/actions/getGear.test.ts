@@ -37,29 +37,18 @@ describe('getGear', () => {
         });
     });
 
-    it('filters by locationValue', async () => {
-        await getGear({ locationValue: 'TW' });
+    it('matches keyword against title or description, case-insensitively', async () => {
+        await getGear({ keyword: '帳篷' });
 
         expect(mockFindMany).toHaveBeenCalledWith({
-            where: { locationValue: 'TW' },
+            where: {
+                OR: [
+                    { title: { contains: '帳篷', mode: 'insensitive' } },
+                    { description: { contains: '帳篷', mode: 'insensitive' } },
+                ],
+            },
             orderBy: { createdAt: 'desc' },
         });
-    });
-
-    it('excludes gear with overlapping rentals when a date range is given', async () => {
-        await getGear({ startDate: '2026-01-01', endDate: '2026-01-05' });
-
-        const { where } = mockFindMany.mock.calls[0][0];
-        expect(where.NOT.rentals.some.OR).toEqual([
-            {
-                endDate: { gte: '2026-01-01' },
-                startDate: { lte: '2026-01-01' },
-            },
-            {
-                startDate: { lte: '2026-01-05' },
-                endDate: { gte: '2026-01-05' },
-            },
-        ]);
     });
 
     it('converts createdAt to an ISO string on each returned item', async () => {

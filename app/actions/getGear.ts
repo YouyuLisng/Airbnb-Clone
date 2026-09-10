@@ -5,9 +5,7 @@ import prisma from '@/app/libs/prismadb';
 // TypeScript 定義型別
 export interface IGearParams {
     userId?: string;
-    startDate?: string;
-    endDate?: string;
-    locationValue?: string;
+    keyword?: string;
     category?: string;
 }
 
@@ -17,9 +15,7 @@ export default async function getGear(
     try {
         const {
             userId,
-            startDate,
-            endDate,
-            locationValue,
+            keyword,
             category
         } = params;
 
@@ -33,27 +29,11 @@ export default async function getGear(
             query.category = category;
         }
 
-        if (locationValue) {
-            query.locationValue = locationValue;
-        }
-
-        if (startDate && endDate) {
-            query.NOT = {
-                rentals: {
-                    some: {
-                        OR: [
-                            {
-                                endDate: { gte: startDate },
-                                startDate: { lte: startDate }
-                            },
-                            {
-                                startDate: { lte: endDate },
-                                endDate: { gte: endDate }
-                            }
-                        ]
-                    }
-                }
-            }
+        if (keyword) {
+            query.OR = [
+                { title: { contains: keyword, mode: 'insensitive' } },
+                { description: { contains: keyword, mode: 'insensitive' } },
+            ];
         }
 
         const gear = await prisma.gear.findMany({
