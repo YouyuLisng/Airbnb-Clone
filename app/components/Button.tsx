@@ -2,6 +2,9 @@
 
 import { IconType } from "react-icons";
 
+import { Button as ShadcnButton } from "@/app/components/ui/button";
+import { cn } from "@/app/libs/utils";
+
 interface ButtonProps {
     label: string;
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -11,6 +14,10 @@ interface ButtonProps {
     icon?: IconType;
 }
 
+// Thin wrapper around shadcn's Button that keeps this app's existing
+// label/outline/small/icon prop shape, so the ~6 call sites across the
+// modals and Gear/* components didn't need to change -- only the
+// implementation underneath moved to shadcn.
 const Button: React.FC<ButtonProps> = ({
     label,
     onClick,
@@ -20,30 +27,16 @@ const Button: React.FC<ButtonProps> = ({
     icon: Icon
 }) => {
     return (
-        <button 
+        <ShadcnButton
             onClick={onClick}
             disabled={disabled}
-            className={`
-            relative
-            disabled:opacity-70
-            disabled:cursor-not-allowed
-            rounded-lg
-            hover:opacity-80
-            transition
-            w-full
-            ${outline ? 'bg-white' : 'bg-emerald-600'}
-            ${outline ? 'border-black' : 'border-emerald-600'}
-            ${outline ? 'text-black' : 'text-white'}
-            ${small ? 'text-sm' : 'text-md'}
-            ${small ? 'py-1' : 'py-3'}
-            ${small ? 'font-light' : 'font-semibold'}
-            ${small ? 'border-[1px]' : 'border-2'}
-        `}>
-            {Icon &&(
-                <Icon size={24} className=" absolute left-4 top-3" />
-            )}
+            variant={outline ? "outline" : "default"}
+            size={small ? "sm" : "lg"}
+            className={cn("w-full", small ? "font-light" : "font-semibold")}
+        >
+            {Icon && <Icon size={20} />}
             {label}
-        </button>
+        </ShadcnButton>
     );
 }
 
