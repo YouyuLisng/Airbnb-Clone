@@ -80,8 +80,10 @@ module.exports = {
       },
     },
   },
-  // Animation utilities come from the tw-animate-css import in
-  // globals.css, not a Tailwind plugin (that's the older
-  // tailwindcss-animate package's approach, not what's installed here).
-  plugins: [],
+  // tailwindcss-animate provides the animate-in/animate-out/fade-*/zoom-*/
+  // slide-* utilities shadcn components use for open/close transitions
+  // (Dialog, etc.) -- the Tailwind-v3-compatible equivalent of v4's
+  // built-in tw-animate-css, which this project deliberately doesn't use
+  // (see the note in globals.css on why the v4-only import was removed).
+  plugins: [require("tailwindcss-animate")],
 }
