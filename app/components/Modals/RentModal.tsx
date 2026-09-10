@@ -16,7 +16,7 @@ import Heading from "../Navbar/Heading";
 import CategoryInput from "../Input/CategoryInpit";
 
 import { categories } from "../Navbar/Categories";
-import CountrySelect from "../Input/CountrySelect";
+import RegionSelect from "../Input/RegionSelect";
 import dynamic from "next/dynamic";
 import ImageUpload from "../Input/ImageUpload";
 import Input from "../Input/Input";
@@ -162,7 +162,7 @@ const RentModal = () => {
                 title="取件地點"
                 subtitle="請告訴我們裝備的所在地區！"
                 />
-                <CountrySelect
+                <RegionSelect
                     value={location}
                     onChang={(value) => setCustomValue('location', value)}
                 />

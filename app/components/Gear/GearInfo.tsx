@@ -1,6 +1,6 @@
 "use client";
 
-import useCountries from "@/app/hooks/useCountries";
+import useRegions from "@/app/hooks/useRegions";
 import { SafeUser } from "@/app/types";
 import { IconType } from "react-icons";
 import Avatar from "../Avatar";
@@ -32,7 +32,7 @@ const GearInfo: React.FC<GearInfoProps> = ({
     category,
     locationValue
 }) => {
-    const { getByValue } = useCountries();
+    const { getByValue } = useRegions();
 
     const coordinates = getByValue(locationValue)?.latlng;
 

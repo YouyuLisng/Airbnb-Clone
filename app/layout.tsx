@@ -1,4 +1,4 @@
-import { Nunito } from 'next/font/google'
+import { Barlow } from 'next/font/google'
 
 import Navbar from '@/app/components/Navbar/Navbar';
 import LoginModal from '@/app/components/Modals/LoginModal';
@@ -16,8 +16,9 @@ export const metadata = {
     description: '戶外裝備 P2P 租借市集',
 }
 
-const font = Nunito({ 
-    subsets: ['latin'], 
+const font = Barlow({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
 });
 
 export default async function RootLayout({

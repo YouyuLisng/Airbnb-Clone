@@ -2,7 +2,7 @@
 
 import { SafeGear, SafeRental, SafeUser } from "@/app/types";
 import { useRouter } from "next/navigation";
-import useCountries from "@/app/hooks/useCountries";
+import useRegions from "@/app/hooks/useRegions";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -30,7 +30,7 @@ const GearCard: React.FC<GearCardProps> = ({
     currentUser
 }) => {
     const router = useRouter();
-    const { getByValue } = useCountries();
+    const { getByValue } = useRegions();
 
     const location = getByValue(data.locationValue);
 
@@ -85,7 +85,7 @@ const GearCard: React.FC<GearCardProps> = ({
                     </div>
                 </div>
                 <div className="font-semibold text-lg">
-                    {location?.region}, {location?.label}
+                    {location?.label} · {location?.region}
                 </div>
                 <div className="font-light text-neutral-500">
                     {rentalDate || data.category}

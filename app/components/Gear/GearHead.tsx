@@ -1,6 +1,6 @@
 "use client";
 
-import useCountries from "@/app/hooks/useCountries";
+import useRegions from "@/app/hooks/useRegions";
 import { SafeUser } from "@/app/types";
 import Image from "next/image";
 import Heading from "../Navbar/Heading";
@@ -21,13 +21,13 @@ const GearHead: React.FC<GearHeadProps> = ({
     id,
     currentUser
 }) => {
-    const { getByValue } = useCountries();
+    const { getByValue } = useRegions();
     const location = getByValue(locationValue);
     return (
         <>
             <Heading
                 title={title}
-                subtitle={`${location?.region}, ${location?.label}`}
+                subtitle={`${location?.label} · ${location?.region}`}
             />
             <div className="w-full h-[60vh] overflow-hidden rounded-xl relative">
                 <Image

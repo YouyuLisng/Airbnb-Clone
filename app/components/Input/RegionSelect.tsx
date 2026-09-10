@@ -1,26 +1,25 @@
 "use client"; // Select Option
 
-import useCountries from "@/app/hooks/useCountries";
+import useRegions from "@/app/hooks/useRegions";
 import Select from "react-select";
 
-export type CountrySelectValue = {
-    flag: string,
+export type RegionSelectValue = {
     label: string,
-    latlng: number[],
+    latlng: readonly number[],
     region: string,
     value: string
 }
 
-interface CountrySelectProps {
-    value?: CountrySelectValue;
-    onChang: (value: CountrySelectValue) => void;
+interface RegionSelectProps {
+    value?: RegionSelectValue;
+    onChang: (value: RegionSelectValue) => void;
 }
 
-const CountrySelect: React.FC<CountrySelectProps> = ({
+const RegionSelect: React.FC<RegionSelectProps> = ({
     value,
     onChang
 }) => {
-    const { getAll } = useCountries();
+    const { getAll } = useRegions();
     return (
         <div>
             <Select
@@ -28,17 +27,16 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
                 isClearable
                 options={getAll()}
                 value={value}
-                onChange={(value) => onChang(value as CountrySelectValue)}
-                formatOptionLabel={(option: any) => (
+                onChange={(value) => onChang(value as RegionSelectValue)}
+                formatOptionLabel={(option: RegionSelectValue) => (
                     <div className="flex flex-row items-center gap-3">
-                        <div>{option.flag}</div>
-                            <div>
-                                {option.label},
-                                <span className="text-neutral-500 ml-1">
-                                    {option.region}
-                                </span>
-                            </div>
+                        <div>
+                            {option.label}
+                            <span className="text-neutral-500 ml-1">
+                                {option.region}
+                            </span>
                         </div>
+                    </div>
                 )}
                 classNames={{
                     control: () => 'p-3 border-2',
@@ -51,7 +49,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
                     colors: {
                         ...theme.colors,
                         primary: 'black',
-                        primary25: '#ffe4e6'
+                        primary25: '#d1fae5'
                     }
                 })}
             />
@@ -59,4 +57,4 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
     );
 }
 
-export default CountrySelect;
+export default RegionSelect;

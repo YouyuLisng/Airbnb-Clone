@@ -3,7 +3,7 @@
 import qs from 'query-string'
 import dynamic from "next/dynamic";
 import Modal from "./Modal";
-import CountrySelect, { CountrySelectValue } from "../Input/CountrySelect";
+import RegionSelect, { RegionSelectValue } from "../Input/RegionSelect";
 
 import useSearchModal from "@/app/hooks/useSearchModal";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -29,7 +29,7 @@ const SearchModal = () => {
     const params = useSearchParams();
     const searchModal = useSearchModal();
 
-    const [location, setLocation] = useState<CountrySelectValue>()
+    const [location, setLocation] = useState<RegionSelectValue>()
     const [step, setStep] = useState(STEPS.LOCATION); // 步驟
     const [dateRange, setDateRange] = useState<Range>({
         startDate: new Date(),
@@ -111,9 +111,9 @@ const SearchModal = () => {
                 title="想在哪個地區取件呢"
                 subtitle="選出你想租借裝備的地區吧！"
             />
-            <CountrySelect
+            <RegionSelect
                 value={location}
-                onChang={(value) => setLocation(value as CountrySelectValue)}
+                onChang={(value) => setLocation(value as RegionSelectValue)}
             />
             <hr />
             <Map center={location?.latlng} />
