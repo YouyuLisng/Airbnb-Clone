@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
-// Shared by ReservationClient, TripsClient and PropertiesClient: all three
+// Shared by LendingClient, RentingClient and MyGearClient: all three
 // delete a resource by id, toast the result, and refresh the current route.
 const useDeleteAction = (urlPrefix: string, successMessage: string) => {
     const router = useRouter();

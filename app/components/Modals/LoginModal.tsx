@@ -119,7 +119,7 @@ const LoginModal = () => {
             <div className="text-neutral-500 text-center mt-4 font-light">
                 <div className="flex flex-row items-center justify-center gap-3">
                     <div>
-                        第一次使用Airbnb?
+                        第一次使用 GearShare?
                     </div>
                     <div onClick={toggle} className=" text-neutral-800 cursor-pointer hover:underline">
                         建立帳號

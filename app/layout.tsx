@@ -12,8 +12,8 @@ import './globals.css'
 import getCurrentUser from './actions/getCurrentUser';
 
 export const metadata = {
-    title: 'Airbnb',
-    description: 'Airbnb Clone',
+    title: 'GearShare',
+    description: '戶外裝備 P2P 租借市集',
 }
 
 const font = Nunito({ 

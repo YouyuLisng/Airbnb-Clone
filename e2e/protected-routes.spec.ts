@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 // Session strategy is JWT (see app/api/auth/[...nextauth]/options.ts), so
 // these checks never touch the database -- safe to run without a real
 // DATABASE_URL/Mongo instance.
-const PROTECTED_ROUTES = ['/trips', '/reservations', '/properties', '/favorites'];
+const PROTECTED_ROUTES = ['/renting', '/lending', '/my-gear', '/favorites'];
 
 for (const route of PROTECTED_ROUTES) {
     test(`unauthenticated visit to ${route} is redirected away`, async ({ page }) => {

@@ -41,9 +41,9 @@ const UserMenu: React.FC<UserMenuProps> = ({
     return (
         <div className="relative">
             <div className="flex flex-row items-center gap-3">
-                <div onClick={onRent} 
+                <div onClick={onRent}
                     className="hidden md:block text-sm font-semibold py-3 px-3 rounded-full hover:bg-neutral-100 transition cursor-pointer">
-                    在Airbnb發布房源
+                    在 GearShare 上架裝備
                 </div>
                 <div onClick={toggleOpen} className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">
                     <div className='hidden md:block'>
@@ -57,11 +57,11 @@ const UserMenu: React.FC<UserMenuProps> = ({
                     <div className=' flex flex-col cursor-pointer'>
                         {currentUser ? (
                             <>
-                                <MenuItem onClick={() => router.push('/trips')} label='我的旅程' />
+                                <MenuItem onClick={() => router.push('/renting')} label='我承租的裝備' />
                                 <MenuItem onClick={() => router.push('/favorites')} label='我的收藏' />
-                                <MenuItem onClick={() => router.push('/reservations')} label='我的房源預訂' />
-                                <MenuItem onClick={() => router.push('/properties')} label='我的房源' />
-                                <MenuItem onClick={rentModal.onOpen} label='在Airbnb發布房源' />
+                                <MenuItem onClick={() => router.push('/lending')} label='別人租借我的裝備' />
+                                <MenuItem onClick={() => router.push('/my-gear')} label='我出租的裝備' />
+                                <MenuItem onClick={rentModal.onOpen} label='在 GearShare 上架裝備' />
                                 <hr />
                                 <MenuItem onClick={() => signOut()} label='登出' />
                             </>

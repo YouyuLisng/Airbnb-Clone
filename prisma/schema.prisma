@@ -22,8 +22,8 @@ model User {
   favoriteIds     String[] @db.ObjectId
 
   accounts Account[]
-  listings Listing[]
-  reservations Reservation[]
+  gear     Gear[]
+  rentals  Rental[]
 }
 
 model Account {
@@ -45,33 +45,37 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Listing {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  description String
-  imageSrc String
-  createdAt DateTime @default(now())
-  category  String
-  roomCount Int
-  bathroomCount Int
-  guestCount Int
+// A single piece of gear one user is offering to rent out to others.
+model Gear {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  imageSrc      String
+  createdAt     DateTime @default(now())
+  category      String
+  condition     String
+  depositAmount Int
+  pricePerDay   Int
   locationValue String
-  userId String @db.ObjectId
-  price Int
+  userId        String @db.ObjectId
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reservations Reservation[]
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rentals Rental[]
 }
 
-model Reservation {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  listingId String @db.ObjectId  
-  startDate DateTime
-  endDate DateTime
-  totalPrice Int
-  createdAt DateTime @default(now())
+// A booked date range for a piece of gear, plus the deposit/condition
+// lifecycle for that specific rental.
+model Rental {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String @db.ObjectId
+  gearId          String @db.ObjectId
+  startDate       DateTime
+  endDate         DateTime
+  totalPrice      Int
+  depositStatus   String @default("held") // held | refunded | forfeited
+  returnCondition String?
+  createdAt       DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  gear Gear @relation(fields: [gearId], references: [id], onDelete: Cascade)
 }

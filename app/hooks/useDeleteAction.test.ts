@@ -25,16 +25,16 @@ describe('useDeleteAction', () => {
     it('deletes against the given URL prefix, toasts success and refreshes the route', async () => {
         (axios.delete as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({});
 
-        const { result } = renderHook(() => useDeleteAction('/api/listings', 'Listing deleted'));
+        const { result } = renderHook(() => useDeleteAction('/api/gear', 'Gear deleted'));
 
         act(() => {
-            result.current.onDelete('listing-1');
+            result.current.onDelete('gear-1');
         });
 
         await waitFor(() => expect(result.current.deletingId).toBe(''));
 
-        expect(axios.delete).toHaveBeenCalledWith('/api/listings/listing-1');
-        expect(toast.success).toHaveBeenCalledWith('Listing deleted');
+        expect(axios.delete).toHaveBeenCalledWith('/api/gear/gear-1');
+        expect(toast.success).toHaveBeenCalledWith('Gear deleted');
         expect(refresh).toHaveBeenCalled();
     });
 
@@ -44,13 +44,13 @@ describe('useDeleteAction', () => {
             new Promise((resolve) => { resolveDelete = resolve; })
         );
 
-        const { result } = renderHook(() => useDeleteAction('/api/listings', 'Listing deleted'));
+        const { result } = renderHook(() => useDeleteAction('/api/gear', 'Gear deleted'));
 
         act(() => {
-            result.current.onDelete('listing-1');
+            result.current.onDelete('gear-1');
         });
 
-        expect(result.current.deletingId).toBe('listing-1');
+        expect(result.current.deletingId).toBe('gear-1');
 
         await act(async () => {
             resolveDelete({});
@@ -64,10 +64,10 @@ describe('useDeleteAction', () => {
             response: { data: { error: 'Nope' } },
         });
 
-        const { result } = renderHook(() => useDeleteAction('/api/listings', 'Listing deleted'));
+        const { result } = renderHook(() => useDeleteAction('/api/gear', 'Gear deleted'));
 
         act(() => {
-            result.current.onDelete('listing-1');
+            result.current.onDelete('gear-1');
         });
 
         await waitFor(() => expect(result.current.deletingId).toBe(''));

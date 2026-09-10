@@ -1,100 +1,84 @@
 "use client";
 
 import Container from "../Container";
-import { TbBeach, TbMountain, TbPool } from 'react-icons/tb';
-import { 
-    GiBarn, 
-    GiBoatFishing, 
-    GiCactus, 
-    GiCastle, 
-    GiCaveEntrance, 
-    GiForestCamp, 
-    GiIsland,
-    GiWindmill
-} from 'react-icons/gi';
 import { FaSkiing } from 'react-icons/fa';
-import { BsSnow } from 'react-icons/bs';
-import { IoDiamond } from 'react-icons/io5';
-import { MdOutlineVilla } from 'react-icons/md';
+import {
+    GiBackpack,
+    GiBinoculars,
+    GiCampCookingPot,
+    GiCampingTent,
+    GiCanoe,
+    GiFishingPole,
+    GiHiking,
+    GiIceCube,
+    GiLantern,
+    GiSleepingBag,
+} from 'react-icons/gi';
+import { IoCameraOutline } from 'react-icons/io5';
 import CategoryBox from "../CategoryBox";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export const categories = [
     {
-        label: 'Beach',
-        icon: TbBeach,
-        description: 'This property is close to the beach!',
+        label: '帳篷',
+        icon: GiCampingTent,
+        description: '各式露營帳篷，適合各種天候與人數！',
     },
     {
-        label: 'Windmills',
-        icon: GiWindmill,
-        description: 'This property is has windmills!',
+        label: '睡袋',
+        icon: GiSleepingBag,
+        description: '保暖睡袋，四季款式皆有！',
     },
     {
-        label: 'Modern',
-        icon: MdOutlineVilla,
-        description: 'This property is modern!'
+        label: '登山包',
+        icon: GiBackpack,
+        description: '大容量登山背包，長短程皆適用！',
     },
     {
-        label: 'Countryside',
-        icon: TbMountain,
-        description: 'This property is in the countryside!'
+        label: '爐具炊具',
+        icon: GiCampCookingPot,
+        description: '露營爐具與鍋具，野炊必備！',
     },
     {
-        label: 'Pools',
-        icon: TbPool,
-        description: 'This is property has a beautiful pool!'
+        label: '攝影器材',
+        icon: IoCameraOutline,
+        description: '相機、鏡頭與空拍機，記錄美好旅程！',
     },
     {
-        label: 'Islands',
-        icon: GiIsland,
-        description: 'This property is on an island!'
+        label: '水上用具',
+        icon: GiCanoe,
+        description: '獨木舟、SUP 等水上運動裝備！',
     },
     {
-        label: 'Lake',
-        icon: GiBoatFishing,
-        description: 'This property is near a lake!'
+        label: '登山健行',
+        icon: GiHiking,
+        description: '登山杖、頭燈等健行必需品！',
     },
     {
-        label: 'Skiing',
+        label: '露營燈具',
+        icon: GiLantern,
+        description: '營燈與照明設備，夜晚不再黑暗！',
+    },
+    {
+        label: '保冷用品',
+        icon: GiIceCube,
+        description: '行動冰箱與保冷袋，食材新鮮保存！',
+    },
+    {
+        label: '釣具',
+        icon: GiFishingPole,
+        description: '釣竿與漁具，享受釣魚樂趣！',
+    },
+    {
+        label: '滑雪用具',
         icon: FaSkiing,
-        description: 'This property has skiing activies!'
+        description: '雪板、雪杖等滑雪裝備！',
     },
     {
-        label: 'Castles',
-        icon: GiCastle,
-        description: 'This property is an ancient castle!'
+        label: '望遠鏡',
+        icon: GiBinoculars,
+        description: '賞鳥、觀星望遠鏡！',
     },
-    {
-        label: 'Caves',
-        icon: GiCaveEntrance,
-        description: 'This property is in a spooky cave!'
-    },
-    {
-        label: 'Camping',
-        icon: GiForestCamp,
-        description: 'This property offers camping activities!'
-    },
-    {
-        label: 'Arctic',
-        icon: BsSnow,
-        description: 'This property is in arctic environment!'
-    },
-    {
-        label: 'Desert',
-        icon: GiCactus,
-        description: 'This property is in the desert!'
-    },
-    {
-        label: 'Barns',
-        icon: GiBarn,
-        description: 'This property is in a barn!'
-    },
-    {
-        label: 'Lux',
-        icon: IoDiamond,
-        description: 'This property is brand new and luxurious!'
-    }
 ]
 
 

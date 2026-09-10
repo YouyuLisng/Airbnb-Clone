@@ -1,18 +1,18 @@
 // @ts-ignore
-import { Listing, Reservation, User } from "@prisma/client";
+import { Gear, Rental, User } from "@prisma/client";
 
-export type SafeListing = Omit<Listing, "createdAt"> & {
+export type SafeGear = Omit<Gear, "createdAt"> & {
     createdAt: string;
 };
 
-export type SafeReservation = Omit<
-    Reservation, 
-    "createdAt" | "startDate" | "endDate" | "listing"
+export type SafeRental = Omit<
+    Rental,
+    "createdAt" | "startDate" | "endDate" | "gear"
 > & {
     createdAt: string;
     startDate: string;
     endDate: string;
-    listing: SafeListing;
+    gear: SafeGear;
 };
 
 export type SafeUser = Omit<

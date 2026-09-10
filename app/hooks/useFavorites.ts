@@ -8,11 +8,11 @@ import useCurrentUser from "./useCurrentUser";
 import useLoginModal from "./useLoginModal";
 
 interface IUseFavorite {
-    listingId: string;
+    gearId: string;
     currentUser?: SafeUser | null
 }
 
-const useFavorite = ({ listingId, currentUser: fallbackCurrentUser }: IUseFavorite) => {
+const useFavorite = ({ gearId, currentUser: fallbackCurrentUser }: IUseFavorite) => {
     const loginModal = useLoginModal();
 
     // SWR-backed current user, seeded with the server-fetched value so the
@@ -25,8 +25,8 @@ const useFavorite = ({ listingId, currentUser: fallbackCurrentUser }: IUseFavori
     const hasFavorited = useMemo(() => {
         const list = currentUser?.favoriteIds || [];
 
-        return list.includes(listingId);
-    }, [currentUser, listingId]);
+        return list.includes(gearId);
+    }, [currentUser, gearId]);
 
     const toggleFavorite = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
@@ -36,13 +36,13 @@ const useFavorite = ({ listingId, currentUser: fallbackCurrentUser }: IUseFavori
         }
 
         const nextFavoriteIds = hasFavorited
-            ? (currentUser.favoriteIds || []).filter((id) => id !== listingId)
-            : [...(currentUser.favoriteIds || []), listingId];
+            ? (currentUser.favoriteIds || []).filter((id) => id !== gearId)
+            : [...(currentUser.favoriteIds || []), gearId];
 
         try {
             const request = hasFavorited
-                ? () => axios.delete(`/api/favorites/${listingId}`)
-                : () => axios.post(`/api/favorites/${listingId}`);
+                ? () => axios.delete(`/api/favorites/${gearId}`)
+                : () => axios.post(`/api/favorites/${gearId}`);
 
             // Optimistically update the shared SWR cache, then reconcile
             // with whatever the API actually persisted.
@@ -65,7 +65,7 @@ const useFavorite = ({ listingId, currentUser: fallbackCurrentUser }: IUseFavori
     [
         currentUser,
         hasFavorited,
-        listingId,
+        gearId,
         loginModal,
         mutateCurrentUser,
     ]);

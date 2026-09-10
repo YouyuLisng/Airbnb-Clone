@@ -1,23 +1,23 @@
 
 import getCurrentUser from './actions/getCurrentUser';
-import getListings, { 
-    IListingsParams
-} from "@/app/actions/getListings";
+import getGear, {
+    IGearParams
+} from "@/app/actions/getGear";
 import ClientOnly from './components/ClientOnly'
 import Container from './components/Container'
 import EmptyState from './components/EmptyState';
-import ListingCard from './components/Listings/ListingCard';
+import GearCard from './components/Gear/GearCard';
 
 export const dynamic = 'force-dynamic' // 部署會遇到 Error: Dynamic server usage: searchParams.userId
 
 interface HomeProps {
-    searchParams: Promise<IListingsParams>
+    searchParams: Promise<IGearParams>
 }
 
 const Home = async ({ searchParams } : HomeProps) => {
-    const listings = await getListings(await searchParams);
+    const gear = await getGear(await searchParams);
     const currentUser = await getCurrentUser();
-    if(listings.length === 0) {
+    if(gear.length === 0) {
         return (
             <ClientOnly>
                 <EmptyState showReaet />
@@ -28,12 +28,12 @@ const Home = async ({ searchParams } : HomeProps) => {
         <ClientOnly>
             <Container>
                 <div className='pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8'>
-                    {listings.map((listing) => {
+                    {gear.map((item) => {
                         return (
-                            <ListingCard 
+                            <GearCard
                                 currentUser={currentUser}
-                                key={listing.id}
-                                data={listing}
+                                key={item.id}
+                                data={item}
                             />
                         )
                     })}

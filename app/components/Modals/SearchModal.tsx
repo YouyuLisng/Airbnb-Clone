@@ -12,12 +12,10 @@ import { Range } from "react-date-range";
 import { formatISO } from 'date-fns';
 import Heading from '../Navbar/Heading';
 import Calendar from '@/app/components/Input/Calendar'
-import Counter from '../Input/Counter';
 
 enum STEPS {
     LOCATION = 0,
-    DATE = 1,
-    INFO = 2
+    DATE = 1
 }
 
 // Hoisted to module scope: dynamic() only needs to be called once, not
@@ -33,9 +31,6 @@ const SearchModal = () => {
 
     const [location, setLocation] = useState<CountrySelectValue>()
     const [step, setStep] = useState(STEPS.LOCATION); // 步驟
-    const [guestCount, setGuestCount] = useState(1); // 人數
-    const [roomCount, setRoomCount] = useState(1);
-    const [bathroomCount, setBothroomCount] = useState(1);
     const [dateRange, setDateRange] = useState<Range>({
         startDate: new Date(),
         endDate: new Date(),
@@ -51,7 +46,7 @@ const SearchModal = () => {
     }, []);
 
     const onSubmit = useCallback( async () => {
-        if(step !== STEPS.INFO) {
+        if(step !== STEPS.DATE) {
             return onNext();
         }
 
@@ -64,9 +59,6 @@ const SearchModal = () => {
         const updatedQuery: any = {
             ...currentQuery,
             locationValue: location?.value,
-            guestCount,
-            roomCount,
-            bathroomCount
         };
 
         if(dateRange.startDate) {
@@ -85,23 +77,20 @@ const SearchModal = () => {
         setStep(STEPS.LOCATION);
         searchModal.onClose();
         router.push(url);
-        
-    }, 
+
+    },
     [
         step,
         searchModal,
         location,
         router,
-        guestCount,
-        roomCount,
-        bathroomCount,
         dateRange,
         onNext,
         params
     ]);
 
     const actionLabel = useMemo(() => {
-        if(step === STEPS.INFO) {
+        if(step === STEPS.DATE) {
             return '搜尋'
         }
 
@@ -119,10 +108,10 @@ const SearchModal = () => {
     let bodyContent = (
         <div className='flex flex-col gap-8'>
             <Heading
-                title="你想去哪裡呢"
-                subtitle="選出你最想去的地方吧！"
+                title="想在哪個地區取件呢"
+                subtitle="選出你想租借裝備的地區吧！"
             />
-            <CountrySelect 
+            <CountrySelect
                 value={location}
                 onChang={(value) => setLocation(value as CountrySelectValue)}
             />
@@ -135,8 +124,8 @@ const SearchModal = () => {
         bodyContent= (
             <div className='flex flex-col gap-8'>
                 <Heading
-                    title="選擇日期"
-                    subtitle="請問何時出發呢？"
+                    title="選擇租借日期"
+                    subtitle="請問什麼時候需要用到裝備呢？"
                 />
                 <Calendar
                     value={dateRange}
@@ -146,41 +135,12 @@ const SearchModal = () => {
         )
     }
 
-    if(step === STEPS.INFO) {
-        bodyContent = (
-            <div className='flex flex-col gap-8'>
-                <Heading
-                    title="詳細資訊"
-                    subtitle="提供更詳細的資訊給我們吧！"
-                />
-                <Counter 
-                    title="人數"
-                    subtitle="請問人數有幾位呢？"
-                    value={guestCount}
-                    onChange={(vaule) => setGuestCount(vaule)}
-                />
-                <Counter 
-                    title="房間"
-                    subtitle="請問需要幾間房間呢？"
-                    value={roomCount}
-                    onChange={(vaule) => setRoomCount(vaule)}
-                />
-                <Counter 
-                    title="浴室"
-                    subtitle="請問需要幾間浴室呢？"
-                    value={bathroomCount}
-                    onChange={(vaule) => setBothroomCount(vaule)}
-                />
-            </div>
-        )
-    }
-
     return (
-        <Modal 
+        <Modal
             isOpen={searchModal.isOpen}
             onClose={searchModal.onClose}
             onSubmit={onSubmit}
-            title="搜尋"
+            title="搜尋裝備"
             actionLabel={actionLabel}
             secondaryActionLabel={secondaryActionLabel}
             secondaryAction={step === STEPS.LOCATION ? undefined : onBack}

@@ -5,6 +5,12 @@ import Modal from "./Modal";
 
 import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import {
+    AiFillStar,
+    AiOutlineCheckCircle,
+    AiOutlineMinusCircle,
+    AiOutlineWarning
+} from "react-icons/ai";
 
 import Heading from "../Navbar/Heading";
 import CategoryInput from "../Input/CategoryInpit";
@@ -12,7 +18,6 @@ import CategoryInput from "../Input/CategoryInpit";
 import { categories } from "../Navbar/Categories";
 import CountrySelect from "../Input/CountrySelect";
 import dynamic from "next/dynamic";
-import Counter from "../Input/Counter";
 import ImageUpload from "../Input/ImageUpload";
 import Input from "../Input/Input";
 import axios from "axios";
@@ -22,11 +27,18 @@ import { useRouter } from "next/navigation";
 enum STEPS {
     CATEGORY = 0,
     LOCATION = 1,
-    INFO = 2,
+    CONDITION = 2,
     IMAGES = 3,
     DESCRIPTION = 4,
     PRICE = 5
 }
+
+const CONDITIONS = [
+    { label: '全新', icon: AiFillStar },
+    { label: '良好', icon: AiOutlineCheckCircle },
+    { label: '普通', icon: AiOutlineMinusCircle },
+    { label: '需維修', icon: AiOutlineWarning },
+];
 
 // Hoisted to module scope: dynamic() only needs to be called once, not
 // re-created (even memoized) on every RentModal render.
@@ -38,11 +50,11 @@ const RentModal = () => {
     const rentModal = useRentModal();
     const router = useRouter();
 
-    const [step, setStep] = useState(STEPS.CATEGORY);  // 創建租屋物件 順序
+    const [step, setStep] = useState(STEPS.CATEGORY);  // 上架裝備 順序
     const [isLoading, setIsLoading] = useState(false); // 執行Api時 Input = disable
 
-    const { 
-        register, 
+    const {
+        register,
         handleSubmit,
         setValue,
         watch,
@@ -54,21 +66,17 @@ const RentModal = () => {
         defaultValues: {
             category: '',
             location: null,
-            guestCount: 1,
-            roomCount: 1,
-            bathroomCount: 1,
+            condition: '',
             imageSrc: '',
-            price: 1,
+            depositAmount: 1,
+            pricePerDay: 1,
             title: '',
             description: '',
         }
     });
     const category = watch('category');
     const location = watch('location');
-
-    const guestCount = watch('guestCount');
-    const roomCount = watch('roomCount');
-    const bathroomCount = watch('bathroomCount');
+    const condition = watch('condition');
     const imageSrc = watch('imageSrc');
 
     const setCustomValue = (id: string, value: any) => {
@@ -99,12 +107,12 @@ const RentModal = () => {
         if (step !== STEPS.PRICE) {
             return onNext();
         }
-        
+
         setIsLoading(true);
-    
-        axios.post('/api/listings', data)
+
+        axios.post('/api/gear', data)
         .then(() => {
-            toast.success('Listing created!');
+            toast.success('裝備上架成功！');
             router.refresh();
             reset();
             setStep(STEPS.CATEGORY)
@@ -129,13 +137,13 @@ const RentModal = () => {
     let bodyContent = (
         <div className="flex flex-col gap-8">
             <Heading
-                title="描述"
-                subtitle="選擇下方的一種特色"
+                title="裝備類別"
+                subtitle="選擇下方最符合的類別"
             />
             <div className=" grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
                 {categories.map((item) => (
                     <div key={item.label} className="col-span-1">
-                        <CategoryInput 
+                        <CategoryInput
                             onClick={(category) => setCustomValue('category', category)}
                             selected={category === item.label}
                             label={item.label}
@@ -151,8 +159,8 @@ const RentModal = () => {
         bodyContent = (
             <div className="flex flex-col gap-8">
                 <Heading
-                title="位置"
-                subtitle="請告訴我們您的房源位置！"
+                title="取件地點"
+                subtitle="請告訴我們裝備的所在地區！"
                 />
                 <CountrySelect
                     value={location}
@@ -165,33 +173,25 @@ const RentModal = () => {
         )
     }
 
-    if(step === STEPS.INFO) {
+    if(step === STEPS.CONDITION) {
         bodyContent = (
             <div className="flex flex-col gap-8">
                 <Heading
-                    title="詳細資訊"
-                    subtitle="請填寫詳細的房屋資訊"
+                    title="新舊狀況"
+                    subtitle="請誠實描述裝備目前的狀況"
                 />
-                <Counter 
-                    title="人數"
-                    subtitle="請問人數有幾位呢？"
-                    value={guestCount}
-                    onChange={(vaule) => setCustomValue('guestCount', vaule)}
-                />
-                <hr />
-                <Counter 
-                    title="房間"
-                    subtitle="請問需要幾間房間呢？"
-                    value={roomCount}
-                    onChange={(vaule) => setCustomValue('roomCount', vaule)}
-                />
-                <hr />
-                <Counter 
-                    title="浴室"
-                    subtitle="請問需要幾間浴室呢？"
-                    value={bathroomCount}
-                    onChange={(vaule) => setCustomValue('bathroomCount', vaule)}
-                />
+                <div className=" grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {CONDITIONS.map((item) => (
+                        <div key={item.label} className="col-span-1">
+                            <CategoryInput
+                                onClick={(value) => setCustomValue('condition', value)}
+                                selected={condition === item.label}
+                                label={item.label}
+                                icon={item.icon}
+                            />
+                        </div>
+                    ))}
+                </div>
             </div>
         )
     }
@@ -201,9 +201,9 @@ const RentModal = () => {
             <div className="flex flex-col gap-8">
                 <Heading
                     title="圖片"
-                    subtitle="請上傳一張代表房源的的照片"
+                    subtitle="請上傳一張代表裝備的的照片"
                 />
-                <ImageUpload 
+                <ImageUpload
                     value={imageSrc}
                     onChange={(value) => setCustomValue('imageSrc', value)}
                 />
@@ -215,8 +215,8 @@ const RentModal = () => {
         bodyContent = (
             <div className="flex flex-col gap-8">
                 <Heading
-                    title="房源名稱"
-                    subtitle="請填寫房源名稱以及介紹"
+                    title="裝備名稱"
+                    subtitle="請填寫裝備名稱以及介紹"
                 />
                 <Input
                     id="title"
@@ -243,12 +243,23 @@ const RentModal = () => {
         bodyContent = (
             <div className="flex flex-col gap-8">
                 <Heading
-                    title="價格"
-                    subtitle="請填寫一晚需收取的價格"
+                    title="租金與押金"
+                    subtitle="請填寫每日租金，以及歸還後會退回的押金"
                 />
-                <Input 
-                    id="price"
-                    label="價格"
+                <Input
+                    id="pricePerDay"
+                    label="每日租金"
+                    formatPrice
+                    disabled={isLoading}
+                    type="number"
+                    register={register}
+                    errors={errors}
+                    required
+                />
+                <hr />
+                <Input
+                    id="depositAmount"
+                    label="押金"
                     formatPrice
                     disabled={isLoading}
                     type="number"
@@ -268,7 +279,7 @@ const RentModal = () => {
             actionLabel={actionLabel}
             secondaryActionLabel={secondaryActionLabel}
             secondaryAction={step === STEPS.CATEGORY ? undefined : onBack }
-            title="向我們介紹你的房源"
+            title="上架你的裝備"
             body={bodyContent}
         />
     );

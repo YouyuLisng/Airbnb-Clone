@@ -3,20 +3,20 @@ import EmptyState from "@/app/components/EmptyState";
 import ClientOnly from "@/app/components/ClientOnly";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import getFavoriteListings from "@/app/actions/getFavoriteListing";
+import getFavoriteGear from "@/app/actions/getFavoriteGear";
 
-import FavoritesClient from "./FavoritesCliect";
+import FavoritesClient from "./FavoritesClient";
 
-const ListingPage = async () => {
-    const listings = await getFavoriteListings();
+const FavoritesPage = async () => {
+    const gear = await getFavoriteGear();
     const currentUser = await getCurrentUser();
 
-    if (listings.length === 0) {
+    if (gear.length === 0) {
         return (
             <ClientOnly>
                 <EmptyState
-                title="目前您任何沒有收藏喔"
-                subtitle="趕快去尋找您喜歡的房子吧！"
+                title="目前您沒有任何收藏喔"
+                subtitle="趕快去尋找您喜歡的裝備吧！"
                 />
             </ClientOnly>
         );
@@ -25,11 +25,11 @@ const ListingPage = async () => {
     return (
         <ClientOnly>
             <FavoritesClient
-                listings={listings}
+                gear={gear}
                 currentUser={currentUser}
             />
         </ClientOnly>
     );
 }
 
-export default ListingPage;
+export default FavoritesPage;
