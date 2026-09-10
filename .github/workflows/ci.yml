@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Dummy values only: the app just needs these env vars to be *set* for
+# `prisma generate` / `next build` to run (Prisma only reads the schema
+# locally at generate time -- it doesn't connect to the database). Unit
+# tests mock Prisma entirely, and the E2E suite is scoped to
+# JWT-session-only flows, so nothing in this workflow ever touches a real
+# database or a real OAuth provider.
+env:
+  DATABASE_URL: "mongodb+srv://user:pass@dummy.mongodb.net/ci"
+  NEXTAUTH_SECRET: "ci-dummy-secret"
+  NEXTAUTH_JWT_SECRET: "ci-dummy-jwt-secret"
+  GITHUB_ID: "ci-dummy"
+  GITHUB_SECRET: "ci-dummy"
+  GOOGLE_CLIENT_ID: "ci-dummy"
+  GOOGLE_CLIENT_SECRET: "ci-dummy"
+  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: "ci-dummy"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E smoke tests
+        run: npm run test:e2e

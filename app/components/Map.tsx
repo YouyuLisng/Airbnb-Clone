@@ -4,16 +4,19 @@ import L from 'leaflet';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 
 import "leaflet/dist/leaflet.css";
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
+// Turbopack (Next.js's default bundler as of Next 16) doesn't resolve
+// `import x from 'leaflet/dist/images/*.png'` to the { src } object shape
+// webpack's asset loader produced, so `markerIcon.src` ends up undefined
+// and Leaflet throws "iconUrl not set in Icon options". Pointing at the
+// CDN copy (pinned to the installed leaflet version) sidesteps bundler
+// asset-resolution behavior entirely.
 // @ts-ignore
-delete L.Icon.Default.prototype._getIconUrl; 
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-    iconUrl: markerIcon.src,
-    iconRetinaUrl: markerIcon2x.src,
-    shadowUrl: markerShadow.src
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
 interface MapProps {

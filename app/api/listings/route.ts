@@ -25,7 +25,23 @@ export async function POST(
         price,
     } = body;
 
-    for (const key of Object.keys(body)) {
+    // Validated against the known required field names, not
+    // Object.keys(body): iterating the request body's own keys only
+    // catches fields that are present-but-falsy, not fields the client
+    // omitted entirely.
+    const requiredFields = [
+        'title',
+        'description',
+        'imageSrc',
+        'category',
+        'roomCount',
+        'bathroomCount',
+        'guestCount',
+        'location',
+        'price',
+    ] as const;
+
+    for (const key of requiredFields) {
         if (!body[key]) {
             return NextResponse.json(
                 { error: `Missing required field: ${key}` },

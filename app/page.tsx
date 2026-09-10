@@ -11,11 +11,11 @@ import ListingCard from './components/Listings/ListingCard';
 export const dynamic = 'force-dynamic' // 部署會遇到 Error: Dynamic server usage: searchParams.userId
 
 interface HomeProps {
-    searchParams: IListingsParams
+    searchParams: Promise<IListingsParams>
 }
 
 const Home = async ({ searchParams } : HomeProps) => {
-    const listings = await getListings(searchParams);
+    const listings = await getListings(await searchParams);
     const currentUser = await getCurrentUser();
     if(listings.length === 0) {
         return (
