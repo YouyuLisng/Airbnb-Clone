@@ -1,14 +1,14 @@
 'use client';
 
 import axios from "axios";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Range } from "react-date-range";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { differenceInDays, eachDayOfInterval } from 'date-fns';
 
 import useLoginModal from "@/app/hooks/useLoginModal";
-import { SafeGear, SafeRental, SafeUser } from "@/app/types";
+import { SafeGear, SafeRental, SafeReview, SafeUser } from "@/app/types";
 
 import Container from "@/app/components/Container";
 import { categories } from "@/app/components/Navbar/Categories";
@@ -26,6 +26,7 @@ interface GearClientProps {
     rentals?: SafeRental[];
     gear: SafeGear & {
         user: SafeUser;
+        reviews: SafeReview[];
     };
     currentUser?: SafeUser | null;
 }
@@ -37,6 +38,16 @@ const GearClient: React.FC<GearClientProps> = ({
 }) => {
     const loginModal = useLoginModal();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const payment = searchParams.get('payment');
+
+        if (payment === 'cancelled') {
+            toast('已取消付款，未完成租借', { icon: 'ℹ️' });
+            router.replace(`/gear/${gear.id}`);
+        }
+    }, [searchParams, router, gear.id]);
 
     const disabledDates = useMemo(() => {
         let dates: Date[] = [];
@@ -78,27 +89,27 @@ const GearClient: React.FC<GearClientProps> = ({
         return gear.pricePerDay;
     }, [dateRange, gear.pricePerDay]);
 
+    // Doesn't create the Rental directly -- it starts a LINE Pay
+    // checkout and redirects the browser there. The Rental itself is
+    // only created once the payment is confirmed, over on
+    // /api/payments/confirm (see that route for why).
     const onCreateRental = useCallback(() => {
         if (!currentUser) {
             return loginModal.onOpen();
         }
         setIsLoading(true);
 
-        axios.post('/api/rentals', {
+        axios.post('/api/payments/request', {
             totalPrice,
             startDate: dateRange.startDate,
             endDate: dateRange.endDate,
             gearId: gear.id
         })
-        .then(() => {
-            toast.success('租借申請已送出！');
-            setDateRange(initialDateRange);
-            router.push('/renting');
+        .then((response) => {
+            window.location.href = response.data.paymentUrl;
         })
-        .catch(() => {
-            toast.error('Something went wrong.');
-        })
-        .finally(() => {
+        .catch((error) => {
+            toast.error(error.response?.data?.error || 'Something went wrong.');
             setIsLoading(false);
         })
     },
@@ -106,7 +117,6 @@ const GearClient: React.FC<GearClientProps> = ({
         totalPrice,
         dateRange,
         gear.id,
-        router,
         currentUser,
         loginModal
     ]);
@@ -130,6 +140,7 @@ const GearClient: React.FC<GearClientProps> = ({
                   condition={gear.condition}
                   depositAmount={gear.depositAmount}
                   locationValue={gear.locationValue}
+                  reviews={gear.reviews}
                 />
                 <div
                   className="

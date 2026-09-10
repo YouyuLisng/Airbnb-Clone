@@ -16,7 +16,11 @@ export default async function getGearById(
                 id: gearId
             },
             include: {
-                user: true
+                user: true,
+                reviews: {
+                    include: { user: true },
+                    orderBy: { createdAt: 'desc' }
+                }
             }
         });
 
@@ -33,7 +37,16 @@ export default async function getGearById(
                 updatedAt: gear.user.updatedAt.toString(),
                 emailVerified:
                     gear.user.emailVerified?.toString() || null,
-            }
+            },
+            reviews: gear.reviews.map((review) => ({
+                ...review,
+                createdAt: review.createdAt.toString(),
+                user: {
+                    id: review.user.id,
+                    name: review.user.name,
+                    image: review.user.image,
+                }
+            }))
         };
 
     } catch (error) {

@@ -31,7 +31,8 @@ export default async function getRentals(
         const rentals = await prisma.rental.findMany({
             where: query,
             include: {
-                gear: true
+                gear: true,
+                review: { include: { user: true } }
             },
             orderBy: {
                 createdAt: 'desc'
@@ -47,7 +48,11 @@ export default async function getRentals(
                 gear: {
                     ...rental.gear,
                     createdAt: rental.gear.createdAt.toISOString(),
-            },
+                },
+                review: rental.review ? {
+                    ...rental.review,
+                    createdAt: rental.review.createdAt.toISOString(),
+                } : null,
         }));
 
         return safeRentals;

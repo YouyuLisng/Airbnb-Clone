@@ -11,34 +11,36 @@ datasource db {
 }
 
 model User {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  name            String?
-  email           String?   @unique
-  emailVerified   DateTime?
-  image           String?
-  hashedPassword  String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  favoriteIds     String[] @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  favoriteIds    String[]  @db.ObjectId
 
   accounts Account[]
   gear     Gear[]
   rentals  Rental[]
+  reviews  Review[]
+  payments Payment[]
 }
 
 model Account {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId             String   @db.ObjectId
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.String
-  access_token       String?  @db.String
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.String
-  session_state      String?
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -47,7 +49,7 @@ model Account {
 
 // A single piece of gear one user is offering to rent out to others.
 model Gear {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   title         String
   description   String
   imageSrc      String
@@ -57,24 +59,69 @@ model Gear {
   depositAmount Int
   pricePerDay   Int
   locationValue String
-  userId        String @db.ObjectId
+  userId        String   @db.ObjectId
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  rentals Rental[]
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rentals  Rental[]
+  reviews  Review[]
+  payments Payment[]
 }
 
 // A booked date range for a piece of gear, plus the deposit/condition
 // lifecycle for that specific rental.
 model Rental {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String @db.ObjectId
-  gearId          String @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  gearId          String   @db.ObjectId
   startDate       DateTime
   endDate         DateTime
   totalPrice      Int
-  depositStatus   String @default("held") // held | refunded | forfeited
+  depositStatus   String   @default("held") // held | refunded | forfeited
   returnCondition String?
   createdAt       DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gear   Gear    @relation(fields: [gearId], references: [id], onDelete: Cascade)
+  review Review?
+}
+
+// A renter's rating/comment for a completed rental. One review per
+// rental (rentalId is unique), left only by the renter after the
+// rental's endDate has passed -- see app/api/reviews/route.ts.
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  rentalId  String   @unique @db.ObjectId
+  gearId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  rental Rental @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  gear   Gear   @relation(fields: [gearId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Tracks a LINE Pay checkout for a prospective rental. The Rental itself
+// isn't created until the payment is confirmed (see
+// app/api/payments/confirm/route.ts) -- this record holds the booking
+// details (gear/dates/amounts) in the meantime and is the audit trail
+// afterwards.
+model Payment {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId       String   @unique
+  transactionId String?
+  userId        String   @db.ObjectId
+  gearId        String   @db.ObjectId
+  startDate     DateTime
+  endDate       DateTime
+  rentalFee     Int
+  depositAmount Int
+  totalAmount   Int
+  status        String   @default("pending") // pending | confirmed | cancelled | failed
+  rentalId      String?  @unique @db.ObjectId
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   gear Gear @relation(fields: [gearId], references: [id], onDelete: Cascade)

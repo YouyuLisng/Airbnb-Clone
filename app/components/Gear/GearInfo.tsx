@@ -1,10 +1,11 @@
 "use client";
 
 import useRegions from "@/app/hooks/useRegions";
-import { SafeUser } from "@/app/types";
+import { SafeReview, SafeUser } from "@/app/types";
 import { IconType } from "react-icons";
 import Avatar from "../Avatar";
 import GearCategory from "./GearCategory";
+import ReviewsSection from "./ReviewsSection";
 import dynamic from "next/dynamic";
 
 const Map = dynamic(() => import('../Map'), {
@@ -22,6 +23,7 @@ interface GearInfoProps {
         description: string;
     } | undefined
     locationValue: string
+    reviews: SafeReview[]
 }
 
 const GearInfo: React.FC<GearInfoProps> = ({
@@ -30,7 +32,8 @@ const GearInfo: React.FC<GearInfoProps> = ({
     condition,
     depositAmount,
     category,
-    locationValue
+    locationValue,
+    reviews
 }) => {
     const { getByValue } = useRegions();
 
@@ -68,6 +71,8 @@ const GearInfo: React.FC<GearInfoProps> = ({
             </div>
             <hr />
             <Map center={coordinates} />
+            <hr />
+            <ReviewsSection reviews={reviews} />
         </div>
     );
 }

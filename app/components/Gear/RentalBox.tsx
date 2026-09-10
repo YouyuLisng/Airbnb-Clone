@@ -45,7 +45,7 @@ const RentalBox: React.FC<RentalBoxProps> = ({
             <div className='p-4'>
                 <Button
                     disabled={disabled}
-                    label='送出租借申請'
+                    label='使用 LINE Pay 付款'
                     onClick={onSubmit}
                 />
             </div>

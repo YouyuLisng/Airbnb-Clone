@@ -17,6 +17,8 @@ interface GearCardProps {
     disabled?: boolean,
     actionLabel?: string,
     actionId?: string,
+    secondaryActionLabel?: string,
+    onSecondaryAction?: (id: string) => void,
     currentUser?: SafeUser | null
 }
 
@@ -27,6 +29,8 @@ const GearCard: React.FC<GearCardProps> = ({
     disabled,
     actionLabel,
     actionId = "",
+    secondaryActionLabel,
+    onSecondaryAction,
     currentUser
 }) => {
     const router = useRouter();
@@ -43,6 +47,17 @@ const GearCard: React.FC<GearCardProps> = ({
 
             onAction?.(actionId)
         }, [actionId, onAction, disabled]
+    );
+
+    const handleSecondaryAction = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            if(disabled) {
+                return
+            }
+
+            onSecondaryAction?.(actionId)
+        }, [actionId, onSecondaryAction, disabled]
     );
 
     const price = useMemo(() => {
@@ -106,6 +121,15 @@ const GearCard: React.FC<GearCardProps> = ({
                         small
                         label={actionLabel}
                         onClick={handleCancel}
+                    />
+                )}
+                {onSecondaryAction && secondaryActionLabel && (
+                    <Button
+                        disabled={disabled}
+                        small
+                        outline
+                        label={secondaryActionLabel}
+                        onClick={handleSecondaryAction}
                     />
                 )}
             </div>
