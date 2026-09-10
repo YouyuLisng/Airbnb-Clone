@@ -28,6 +28,12 @@ enum STEPS {
     PRICE = 5
 }
 
+// Hoisted to module scope: dynamic() only needs to be called once, not
+// re-created (even memoized) on every RentModal render.
+const Map = dynamic(() => import('../Map'), {
+    ssr: false
+});
+
 const RentModal = () => {
     const rentModal = useRentModal();
     const router = useRouter();
@@ -64,11 +70,6 @@ const RentModal = () => {
     const roomCount = watch('roomCount');
     const bathroomCount = watch('bathroomCount');
     const imageSrc = watch('imageSrc');
-
-    // 引入地圖元件
-    const Map = useMemo(() => dynamic(() => import('../Map'),{
-        ssr: false
-    }), []);
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {

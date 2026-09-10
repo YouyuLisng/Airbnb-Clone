@@ -1,7 +1,7 @@
 'use client';
 
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Range } from "react-date-range";
 import { useRouter } from "next/navigation";
@@ -59,8 +59,24 @@ const ListingClient: React.FC<ListingClientProps> = ({
     }, [listing.category]);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [totalPrice, setTotalPrice] = useState(listing.price);
     const [dateRange, setDateRange] = useState<Range>(initialDateRange);
+
+    // Derived purely from dateRange/listing.price, so it's computed
+    // directly instead of mirrored into its own state via an effect.
+    const totalPrice = useMemo(() => {
+        if (dateRange.startDate && dateRange.endDate) {
+            const dayCount = differenceInDays(
+                dateRange.endDate,
+                dateRange.startDate
+            );
+
+            if (dayCount && listing.price) {
+                return dayCount * listing.price;
+            }
+        }
+
+        return listing.price;
+    }, [dateRange, listing.price]);
 
     const onCreateReservation = useCallback(() => {
         if (!currentUser) {
@@ -72,7 +88,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             totalPrice,
             startDate: dateRange.startDate,
             endDate: dateRange.endDate,
-            listingId: listing?.id
+            listingId: listing.id
         })
         .then(() => {
             toast.success('Listing reserved!');
@@ -87,28 +103,13 @@ const ListingClient: React.FC<ListingClientProps> = ({
         })
     },
     [
-        totalPrice, 
-        dateRange, 
-        listing?.id,
+        totalPrice,
+        dateRange,
+        listing.id,
         router,
         currentUser,
         loginModal
     ]);
-
-    useEffect(() => {
-        if (dateRange.startDate && dateRange.endDate) {
-            const dayCount = differenceInDays(
-                dateRange.endDate, 
-                dateRange.startDate
-            );
-        
-            if (dayCount && listing.price) {
-                setTotalPrice(dayCount * listing.price);
-            } else {
-                setTotalPrice(listing.price);
-            }
-        }
-    }, [dateRange, listing.price]);
 
     return (
         <Container>

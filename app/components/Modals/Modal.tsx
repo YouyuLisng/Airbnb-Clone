@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { IoMdClose } from "react-icons/io"
 import Button from "../Button";
 
@@ -31,10 +31,15 @@ const Modal: React.FC<ModalProps> = ({
     secondaryActionLabel
 }) => {
     const [showModal, setShowModal] = useState(isOpen);
+    // Mirrors `isOpen` into local state during render (instead of via an
+    // effect) so handleClose can still drop showModal early to trigger the
+    // closing animation before the parent flips `isOpen` off.
+    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
 
-    useEffect(() => {
+    if (isOpen !== prevIsOpen) {
+        setPrevIsOpen(isOpen);
         setShowModal(isOpen);
-    }, [isOpen]);
+    }
 
 
     const handleClose = useCallback(() => {

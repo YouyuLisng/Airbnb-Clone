@@ -10,7 +10,7 @@ interface IdParams {
 
 export async function POST(
     request: Request,
-    { params } : { params: IdParams }
+    { params } : { params: Promise<IdParams> }
 ) {
     const currentUser = await getCurrentUser();
 
@@ -18,7 +18,7 @@ export async function POST(
         return NextResponse.error();
     }
 
-    const { listingId } = params;
+    const { listingId } = await params;
 
     if(!listingId || typeof listingId !== 'string') {
         throw new Error("Invalid ID");
@@ -43,7 +43,7 @@ export async function POST(
 
 export async function DELETE (
     request: Request,
-    { params } : { params: IdParams }
+    { params } : { params: Promise<IdParams> }
 ) {
     const currentUser = await getCurrentUser();
 
@@ -51,7 +51,7 @@ export async function DELETE (
         return NextResponse.error();
     }
 
-    const { listingId } = params;
+    const { listingId } = await params;
 
     if(!listingId || typeof listingId !== 'string') {
         throw new Error("Invalid ID");
