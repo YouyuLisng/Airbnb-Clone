@@ -20,9 +20,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
     onChange,
     disabledDates
 }) => {
-    return ( 
+    return (
         <DateRange
-            rangeColors={['#262626']}
+            className="gearshare-calendar"
+            rangeColors={['#047857']}
             ranges={[value]}
             date={new Date()}
             onChange={onChange}
