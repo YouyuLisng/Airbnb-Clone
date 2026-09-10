@@ -7,16 +7,11 @@ import RegionSelect, { RegionSelectValue } from "../Input/RegionSelect";
 
 import useSearchModal from "@/app/hooks/useSearchModal";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { Range } from "react-date-range";
 import { formatISO } from 'date-fns';
 import Heading from '../Navbar/Heading';
 import Calendar from '@/app/components/Input/Calendar'
-
-enum STEPS {
-    LOCATION = 0,
-    DATE = 1
-}
 
 // Hoisted to module scope: dynamic() only needs to be called once, not
 // re-created (even memoized) on every SearchModal render.
@@ -30,26 +25,17 @@ const SearchModal = () => {
     const searchModal = useSearchModal();
 
     const [location, setLocation] = useState<RegionSelectValue>()
-    const [step, setStep] = useState(STEPS.LOCATION); // 步驟
     const [dateRange, setDateRange] = useState<Range>({
         startDate: new Date(),
         endDate: new Date(),
         key: 'selection'
     });
 
-    const onBack = useCallback(() => {
-        setStep((value) => value - 1)
-    }, []);
-
-    const onNext = useCallback(() => {
-        setStep((value) => value + 1)
-    }, []);
-
-    const onSubmit = useCallback( async () => {
-        if(step !== STEPS.DATE) {
-            return onNext();
-        }
-
+    // Location and date used to be two separate wizard steps, but they're
+    // just two filters on one search -- not enough content to justify
+    // making someone click through a multi-step flow for them, so this is
+    // now a single panel instead.
+    const onSubmit = useCallback(async () => {
         let currentQuery = {};
 
         if(params) {
@@ -74,66 +60,38 @@ const SearchModal = () => {
             query: updatedQuery
         }, { skipNull: true });
 
-        setStep(STEPS.LOCATION);
         searchModal.onClose();
         router.push(url);
 
     },
     [
-        step,
         searchModal,
         location,
         router,
         dateRange,
-        onNext,
         params
     ]);
 
-    const actionLabel = useMemo(() => {
-        if(step === STEPS.DATE) {
-            return '搜尋'
-        }
-
-        return '下一步'
-    }, [step]);
-
-    const secondaryActionLabel = useMemo(() => {
-        if(step === STEPS.LOCATION) {
-            return 'undefined'
-        }
-
-        return '上一步'
-    }, [step]);
-
-    let bodyContent = (
-        <div className='flex flex-col gap-8'>
+    const bodyContent = (
+        <div className='flex flex-col gap-6'>
             <Heading
-                title="想在哪個地區取件呢"
-                subtitle="選出你想租借裝備的地區吧！"
+                title="搜尋裝備"
+                subtitle="選擇地區與租借日期"
             />
-            <RegionSelect
-                value={location}
-                onChang={(value) => setLocation(value as RegionSelectValue)}
-            />
+            <div className="flex flex-col gap-3">
+                <RegionSelect
+                    value={location}
+                    onChang={(value) => setLocation(value as RegionSelectValue)}
+                />
+                <Map center={location?.latlng} />
+            </div>
             <hr />
-            <Map center={location?.latlng} />
+            <Calendar
+                value={dateRange}
+                onChange={(value) => setDateRange(value.selection)}
+            />
         </div>
     );
-
-    if(step === STEPS.DATE) {
-        bodyContent= (
-            <div className='flex flex-col gap-8'>
-                <Heading
-                    title="選擇租借日期"
-                    subtitle="請問什麼時候需要用到裝備呢？"
-                />
-                <Calendar
-                    value={dateRange}
-                    onChange={(value) => setDateRange(value.selection)}
-                />
-            </div>
-        )
-    }
 
     return (
         <Modal
@@ -141,9 +99,7 @@ const SearchModal = () => {
             onClose={searchModal.onClose}
             onSubmit={onSubmit}
             title="搜尋裝備"
-            actionLabel={actionLabel}
-            secondaryActionLabel={secondaryActionLabel}
-            secondaryAction={step === STEPS.LOCATION ? undefined : onBack}
+            actionLabel="搜尋"
             body={bodyContent}
         />
     );
