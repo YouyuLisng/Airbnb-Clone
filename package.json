@@ -35,6 +35,7 @@
     "react-leaflet": "^4.2.1",
     "react-select": "^5.7.5",
     "react-spinners": "^0.13.8",
+    "swr": "^2.2.2",
     "typescript": "5.2.2",
     "world-countries": "^5.0.0",
     "zustand": "^4.4.1"
