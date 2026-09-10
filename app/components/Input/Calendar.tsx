@@ -1,10 +1,11 @@
 'use client';
 
-import { 
-    DateRange, 
-    Range, 
+import {
+    DateRange,
+    Range,
     RangeKeyDict
 } from 'react-date-range';
+import { zhTW } from 'date-fns/locale';
 
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -31,6 +32,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
             showDateDisplay={false}
             minDate={new Date()}
             disabledDates={disabledDates}
+            locale={zhTW}
+            weekdayDisplayFormat="EEEEEE"
         />
     );
 }
