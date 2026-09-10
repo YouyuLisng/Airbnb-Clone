@@ -5,26 +5,42 @@ import { MapLibreMap, Marker, NavigationControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { BiMapPin } from 'react-icons/bi';
 
-// MapLibre still needs a "style" object even for plain raster tiles --
-// this points it at OpenTopoMap (terrain/elevation-shaded, no API key
-// required), fitting an outdoor gear rental product much better than a
-// plain street map.
-const TOPO_STYLE = {
+// OpenTopoMap's elevation-shaded terrain tiles read as too busy/"realistic"
+// against the rest of GearShare's flat, minimal UI. Esri's "Light Gray
+// Canvas" basemap (light gray, thin roads, minimal labels, genuinely
+// keyless) is a much cleaner fit. Two things were tried and ruled out
+// first: an OpenFreeMap vector build of CARTO's Positron style rendered
+// as a blank canvas under headless Chromium's software WebGL fallback
+// (loaded fine, just never visibly painted, so it couldn't be verified);
+// CARTO's own basemaps.cartocdn.com raster tiles now silently serve an
+// "API KEY REQUIRED" watermark instead of actually erring on
+// unauthenticated requests. Esri's tiles are plain raster (same proven
+// rendering path as the earlier OpenTopoMap version) and need no key.
+const esriTileUrl = (service: string) =>
+    // Esri's tile REST API addresses tiles as z/y/x, not the usual z/x/y.
+    `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${service}/MapServer/tile/{z}/{y}/{x}`;
+
+const lightGrayStyle = {
     version: 8 as const,
     sources: {
-        opentopo: {
+        base: {
             type: 'raster' as const,
-            tiles: [
-                'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
-                'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
-                'https://c.tile.opentopomap.org/{z}/{x}/{y}.png',
-            ],
+            tiles: [esriTileUrl('World_Light_Gray_Base')],
             tileSize: 256,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors, <a href="https://opentopomap.org" target="_blank">OpenTopoMap</a> (CC-BY-SA)',
+            attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+        },
+        // Place-name labels, roads, and borders as a separate transparent
+        // overlay -- this is how Esri's Light Gray Canvas is meant to be
+        // composited (base + reference).
+        reference: {
+            type: 'raster' as const,
+            tiles: [esriTileUrl('World_Light_Gray_Reference')],
+            tileSize: 256,
         },
     },
     layers: [
-        { id: 'opentopo', type: 'raster' as const, source: 'opentopo' },
+        { id: 'base', type: 'raster' as const, source: 'base' },
+        { id: 'reference', type: 'raster' as const, source: 'reference' },
     ],
 };
 
@@ -46,6 +62,7 @@ const Map: React.FC<MapProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<MapLibreMap | null>(null);
     const markerRef = useRef<Marker | null>(null);
+    const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
     // Builds the map the first time `center` becomes available, then just
     // pans/recenters it on subsequent changes -- MapLibre's Map instance
@@ -65,7 +82,7 @@ const Map: React.FC<MapProps> = ({
 
             const map = new MapLibreMap({
                 container: containerRef.current,
-                style: TOPO_STYLE,
+                style: lightGrayStyle,
                 center: lngLat,
                 zoom: 10,
                 scrollZoom: false,
@@ -78,6 +95,16 @@ const Map: React.FC<MapProps> = ({
             markerRef.current = new Marker({ element: el, anchor: 'bottom' })
                 .setLngLat(lngLat)
                 .addTo(map);
+
+            // The map is created while it's inside an animating modal
+            // (Modal.tsx scales/translates in over ~300ms), so the
+            // container's on-screen size when the WebGL canvas is first
+            // sized can be stale -- MapLibre doesn't watch for that on its
+            // own. Without this it renders as a blank canvas until
+            // something else happens to trigger a resize.
+            const resizeObserver = new ResizeObserver(() => map.resize());
+            resizeObserver.observe(containerRef.current);
+            resizeObserverRef.current = resizeObserver;
         } else {
             mapRef.current.flyTo({ center: lngLat, zoom: 10 });
             markerRef.current?.setLngLat(lngLat);
@@ -87,6 +114,8 @@ const Map: React.FC<MapProps> = ({
     // Tear the map down on unmount.
     useEffect(() => {
         return () => {
+            resizeObserverRef.current?.disconnect();
+            resizeObserverRef.current = null;
             mapRef.current?.remove();
             mapRef.current = null;
         };
