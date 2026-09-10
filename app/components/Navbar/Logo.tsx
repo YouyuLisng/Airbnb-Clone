@@ -6,7 +6,7 @@ const Logo = () => {
     return(
         <div
             onClick={() => router.push('/')}
-            className="hidden md:block cursor-pointer text-2xl font-bold text-rose-500"
+            className="hidden md:block cursor-pointer text-2xl font-bold text-emerald-700"
         >
             GearShare
         </div>

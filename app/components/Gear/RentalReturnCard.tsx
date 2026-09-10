@@ -21,6 +21,15 @@ const DEPOSIT_STATUS_LABEL: Record<string, string> = {
     forfeited: '押金已沒收',
 };
 
+// held = pending (amber), refunded = good outcome (emerald),
+// forfeited = bad outcome (red) -- scannable at a glance across a grid
+// of cards without having to read the label text.
+const DEPOSIT_STATUS_COLOR: Record<string, string> = {
+    held: 'bg-amber-100 text-amber-800',
+    refunded: 'bg-emerald-100 text-emerald-800',
+    forfeited: 'bg-red-100 text-red-800',
+};
+
 interface RentalReturnCardProps {
     rental: SafeRental;
 }
@@ -72,13 +81,18 @@ const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental }) => {
                     <div className="text-sm text-neutral-500">
                         押金 ${rental.gear.depositAmount} TWD
                     </div>
+                    <span className={`
+                        mt-1 w-fit px-2 py-0.5 rounded-full text-xs font-semibold
+                        ${DEPOSIT_STATUS_COLOR[rental.depositStatus]}
+                    `}>
+                        {DEPOSIT_STATUS_LABEL[rental.depositStatus]}
+                    </span>
                 </div>
             </div>
             <hr />
             {isResolved ? (
-                <div className="text-sm font-semibold">
-                    {DEPOSIT_STATUS_LABEL[rental.depositStatus]}
-                    {rental.returnCondition && `（歸還狀況：${rental.returnCondition}）`}
+                <div className="text-sm text-neutral-500">
+                    {rental.returnCondition && `歸還狀況：${rental.returnCondition}`}
                 </div>
             ) : (
                 <div className="flex flex-row items-center gap-2">
