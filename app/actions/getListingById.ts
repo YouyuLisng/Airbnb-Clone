@@ -36,7 +36,8 @@ export default async function getListingById(
             }
         };
 
-    } catch (error: any) {
-        throw new Error(error);
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
 }

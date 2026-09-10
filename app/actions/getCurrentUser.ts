@@ -30,7 +30,11 @@ export default async function getCurrentUser() {
             updatedAt: currentUser.updatedAt.toISOString(),
             emailVerified: currentUser.emailVerified?.toISOString() || null,
         };
-    } catch (error: any) {
+    } catch (error) {
+        // Swallowed intentionally: callers treat "no current user" and
+        // "failed to look one up" the same way (render as logged-out).
+        // Still logged so real DB/session failures aren't silently lost.
+        console.error(error);
         return null;
     }
 }

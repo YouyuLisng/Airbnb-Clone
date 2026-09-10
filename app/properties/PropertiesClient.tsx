@@ -1,13 +1,10 @@
 'use client';
 
-import { toast } from "react-hot-toast";
-import axios from "axios";
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
 import { SafeListing, SafeUser } from "@/app/types";
 import Container from "../components/Container";
 import ListingCard from "../components/Listings/ListingCard";
 import Heading from "../components/Navbar/Heading";
+import useDeleteAction from "../hooks/useDeleteAction";
 
 interface PropertiesClientProps {
     listings: SafeListing[],
@@ -18,27 +15,12 @@ const PropertiesClient: React.FC<PropertiesClientProps> = ({
     listings,
     currentUser
 }) => {
-    const router = useRouter();
-    const [deletingId, setDeletingId] = useState('');
+    const { deletingId, onDelete } = useDeleteAction(
+        '/api/listings',
+        'Listing deleted'
+    );
 
-    const onDelete = useCallback((id: string) => {
-        setDeletingId(id);
-
-        axios.delete(`/api/listings/${id}`)
-        .then(() => {
-            toast.success('Listing deleted');
-            router.refresh();
-        })
-        .catch((error) => {
-            toast.error(error?.response?.data?.error)
-        })
-        .finally(() => {
-            setDeletingId('');
-        })
-    }, [router]);
-
-
-    return ( 
+    return (
         <Container>
             <Heading
                 title="我的房源"
@@ -57,7 +39,7 @@ const PropertiesClient: React.FC<PropertiesClientProps> = ({
                 gap-8
                 "
         >
-            {listings.map((listing: any) => (
+            {listings.map((listing) => (
                 <ListingCard
                     key={listing.id}
                     data={listing}

@@ -3,15 +3,8 @@ import Container from "../components/Container";
 import ListingCard from "../components/Listings/ListingCard";
 import Heading from "../components/Navbar/Heading";
 
-import axios from "axios";
-import { useCallback, useState } from "react";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import { SafeReservation, SafeUser } from "../types";
-
-
-
-
+import useDeleteAction from "../hooks/useDeleteAction";
 interface ReservationClientProps {
     reservations: SafeReservation[];
     currentUser?: SafeUser | null;
@@ -21,23 +14,11 @@ const ReservationClient: React.FC<ReservationClientProps> = ({
     reservations,
     currentUser
 }) => {
-    const router = useRouter();
-    const [deletingId, setDeletingId] = useState('');
+    const { deletingId, onDelete: onCancel } = useDeleteAction(
+        '/api/reservations',
+        'Reservations Canceled'
+    );
 
-    const onCancel = useCallback((id: string) => {
-        setDeletingId(id);
-        axios.delete(`/api/reservations/${id}`)
-        .then(() => {
-            toast.success('Reservations Canceled');
-            router.refresh();
-        })
-        .catch((error) => {
-            toast.error(error?.response?.data?.error)
-        })
-        .finally(() => {
-            setDeletingId('')
-        })
-    }, [router]);
     return (
         <Container>
             <Heading 
@@ -45,7 +26,7 @@ const ReservationClient: React.FC<ReservationClientProps> = ({
                 subtitle="不要忘記你的預約訂單喔～"
             />
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8">
-                {reservations.map((reservation: any) => (
+                {reservations.map((reservation) => (
                     <ListingCard
                         key={reservation.id}
                         data={reservation.listing}

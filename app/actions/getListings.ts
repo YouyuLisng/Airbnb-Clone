@@ -1,4 +1,6 @@
 
+import { Prisma } from '@prisma/client';
+
 import prisma from '@/app/libs/prismadb';
 
 // TypeScript 定義型別
@@ -28,7 +30,7 @@ export default async function getListings(
             category
         } = params;
 
-        let query: any = {};
+        const query: Prisma.ListingWhereInput = {};
 
         if(userId) {
             query.userId = userId;
@@ -86,12 +88,13 @@ export default async function getListings(
             }
         });
 
-        const safeListings = listings.map((listings: any) => ({
-            ...listings,
-            createdAt: listings.createdAt.toISOString()
+        const safeListings = listings.map((listing) => ({
+            ...listing,
+            createdAt: listing.createdAt.toISOString()
         }));
         return safeListings;
-    } catch (error: any) {
-        throw new Error(error);
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
 }
