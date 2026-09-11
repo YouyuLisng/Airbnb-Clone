@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { differenceInDays, eachDayOfInterval } from 'date-fns';
 

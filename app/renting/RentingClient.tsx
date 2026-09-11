@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 import Container from "../components/Container";
 import GearCard from "../components/Gear/GearCard";

@@ -1,8 +1,8 @@
 'use client';
-import { Toaster} from "react-hot-toast";
+import { Toaster } from "@/app/components/ui/sonner";
 
 const ToastProvider = () => {
-    return ( 
+    return (
         <Toaster />
     );
 }

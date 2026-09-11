@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 // Shared by LendingClient, RentingClient and MyGearClient: all three
 // delete a resource by id, toast the result, and refresh the current route.

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 import useDeleteAction from './useDeleteAction';
 
@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('axios');
 
-vi.mock('react-hot-toast', () => ({
+vi.mock('sonner', () => ({
     toast: { success: vi.fn(), error: vi.fn() },
 }));
 

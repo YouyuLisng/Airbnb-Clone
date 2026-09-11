@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import Image from "next/image";

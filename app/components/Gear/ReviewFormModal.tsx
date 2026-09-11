@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import Modal from "../Modals/Modal";

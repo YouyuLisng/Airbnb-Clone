@@ -21,7 +21,7 @@ import dynamic from "next/dynamic";
 import ImageUpload from "../Input/ImageUpload";
 import Input from "../Input/Input";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 enum STEPS {
