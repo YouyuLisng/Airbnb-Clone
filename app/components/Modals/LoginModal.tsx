@@ -1,7 +1,7 @@
 'use client';
 "登入Modal"
 import { signIn } from "next-auth/react";
-import { AiFillGithub, AiFillApple } from "react-icons/ai";
+import { AiFillGithub } from "react-icons/ai";
 // import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
@@ -109,12 +109,6 @@ const LoginModal = () => {
             label="使用GitHub登入"
             icon={AiFillGithub}
             onClick={() => signIn('github')}
-            />
-            <Button
-            outline
-            label="使用Apple登入"
-            icon={AiFillApple}
-            onClick={() => signIn('apple')}
             />
             <div className="text-neutral-500 text-center mt-4 font-light">
                 <div className="flex flex-row items-center justify-center gap-3">
