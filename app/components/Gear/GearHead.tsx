@@ -11,6 +11,7 @@ interface GearHeadProps {
     locationValue: string;
     imageSrc: string;
     id: string;
+    ownerId: string;
     currentUser?: SafeUser | null
 }
 
@@ -19,6 +20,7 @@ const GearHead: React.FC<GearHeadProps> = ({
     locationValue,
     imageSrc,
     id,
+    ownerId,
     currentUser
 }) => {
     const { getByValue } = useRegions();
@@ -36,12 +38,14 @@ const GearHead: React.FC<GearHeadProps> = ({
                     fill
                     className="object-cover w-full"
                 />
-                <div className="absolute top-5 right-5">
-                    <HeartButton
-                        gearId={id}
-                        currentUser={currentUser}
-                    />
-                </div>
+                {currentUser?.id !== ownerId && (
+                    <div className="absolute top-5 right-5">
+                        <HeartButton
+                            gearId={id}
+                            currentUser={currentUser}
+                        />
+                    </div>
+                )}
             </div>
         </>
     );

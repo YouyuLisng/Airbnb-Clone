@@ -59,7 +59,11 @@ const useFavorite = ({ gearId, currentUser: fallbackCurrentUser }: IUseFavorite)
             );
             toast.success('Success');
         } catch (error) {
-            toast.error('Something went wrong.');
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.error
+                : undefined;
+
+            toast.error(message || 'Something went wrong.');
         }
     },
     [

@@ -23,6 +23,15 @@ export async function POST(
 
     }
 
+    const gear = await prisma.gear.findUnique({ where: { id: gearId } });
+
+    if (gear?.userId === currentUser.id) {
+        return NextResponse.json(
+            { error: '不能收藏自己上架的裝備' },
+            { status: 400 }
+        );
+    }
+
     let favoriteIds = [...(currentUser.favoriteIds || [] )];
 
     favoriteIds.push(gearId);

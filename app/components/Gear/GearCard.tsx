@@ -92,12 +92,14 @@ const GearCard: React.FC<GearCardProps> = ({
                         src={data.imageSrc}
                         className="object-cover h-full w-full group-hover:scale-110 transition"
                     />
-                    <div className="absolute top-3 right-3">
-                        <HeartButton
-                            gearId={data.id}
-                            currentUser={currentUser}
-                        />
-                    </div>
+                    {currentUser?.id !== data.userId && (
+                        <div className="absolute top-3 right-3">
+                            <HeartButton
+                                gearId={data.id}
+                                currentUser={currentUser}
+                            />
+                        </div>
+                    )}
                 </div>
                 <div className="font-semibold text-lg">
                     {location?.label} · {location?.region}
