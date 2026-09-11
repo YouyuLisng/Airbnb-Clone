@@ -51,7 +51,23 @@ const RentingClient: React.FC<RentingClientProps> = ({
         const ids = new Set<string>();
 
         rentals.forEach((rental) => {
-            if (!rental.review && new Date(rental.endDate) < now) {
+            if (!rental.review && rental.status !== 'cancelled' && new Date(rental.endDate) < now) {
+                ids.add(rental.id);
+            }
+        });
+
+        return ids;
+    }, [rentals]);
+
+    // Mirrors the server-side guard in app/api/rentals/[rentalId]/route.ts:
+    // only a still-confirmed rental that hasn't started yet can be
+    // cancelled.
+    const cancellableIds = useMemo(() => {
+        const now = new Date();
+        const ids = new Set<string>();
+
+        rentals.forEach((rental) => {
+            if (rental.status !== 'cancelled' && new Date(rental.startDate) > now) {
                 ids.add(rental.id);
             }
         });
@@ -72,9 +88,10 @@ const RentingClient: React.FC<RentingClientProps> = ({
                         data={rental.gear}
                         rental={rental}
                         actionId={rental.id}
-                        onAction={onCancel}
+                        onAction={cancellableIds.has(rental.id) ? onCancel : undefined}
                         disabled={deletingId === rental.id}
-                        actionLabel="取消租借"
+                        actionLabel={cancellableIds.has(rental.id) ? "取消租借" : undefined}
+                        statusBadge={rental.status === 'cancelled' ? '已取消' : undefined}
                         secondaryActionLabel={
                             reviewEligibleIds.has(rental.id) ? "留下評價" : undefined
                         }

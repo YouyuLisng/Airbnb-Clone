@@ -18,9 +18,9 @@ export async function POST(
     startDate,
     endDate,
     totalPrice
-   } = body;
+  } = body;
 
-   if (!gearId || !startDate || !endDate || !totalPrice) {
+  if (!gearId || !startDate || !endDate || !totalPrice) {
     return NextResponse.error();
   }
 

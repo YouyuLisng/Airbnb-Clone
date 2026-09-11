@@ -44,7 +44,8 @@ const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental }) => {
     const [condition, setCondition] = useState(RETURN_CONDITIONS[0]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const isResolved = rental.depositStatus !== 'held';
+    const isCancelled = rental.status === 'cancelled';
+    const isResolved = isCancelled || rental.depositStatus !== 'held';
 
     const onSubmit = useCallback(() => {
         setIsSubmitting(true);
@@ -83,14 +84,18 @@ const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental }) => {
                     </div>
                     <span className={`
                         mt-1 w-fit px-2 py-0.5 rounded-full text-xs font-semibold
-                        ${DEPOSIT_STATUS_COLOR[rental.depositStatus]}
+                        ${isCancelled ? 'bg-neutral-100 text-neutral-600' : DEPOSIT_STATUS_COLOR[rental.depositStatus]}
                     `}>
-                        {DEPOSIT_STATUS_LABEL[rental.depositStatus]}
+                        {isCancelled ? '已取消' : DEPOSIT_STATUS_LABEL[rental.depositStatus]}
                     </span>
                 </div>
             </div>
             <hr />
-            {isResolved ? (
+            {isCancelled ? (
+                <div className="text-sm text-neutral-500">
+                    這筆租借已被取消，無需確認歸還。
+                </div>
+            ) : isResolved ? (
                 <div className="text-sm text-neutral-500">
                     {rental.returnCondition && `歸還狀況：${rental.returnCondition}`}
                 </div>

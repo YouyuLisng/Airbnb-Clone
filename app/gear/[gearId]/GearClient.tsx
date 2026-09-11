@@ -53,6 +53,10 @@ const GearClient: React.FC<GearClientProps> = ({
         let dates: Date[] = [];
 
         rentals.forEach((rental) => {
+        if (rental.status === 'cancelled') {
+            return;
+        }
+
         const range = eachDayOfInterval({
             start: new Date(rental.startDate),
             end: new Date(rental.endDate)

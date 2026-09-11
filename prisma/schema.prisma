@@ -76,6 +76,7 @@ model Rental {
   startDate       DateTime
   endDate         DateTime
   totalPrice      Int
+  status          String   @default("confirmed") // confirmed | cancelled
   depositStatus   String   @default("held") // held | refunded | forfeited
   returnCondition String?
   createdAt       DateTime @default(now())

@@ -7,6 +7,12 @@ interface IParams {
     rentalId?: string;
 }
 
+// Cancels a rental -- a soft cancel (status flips to "cancelled"), not a
+// hard delete. Two reasons: a completed/in-progress rental shouldn't be
+// cancellable at all (see the guards below), and hard-deleting the row
+// would cascade-delete its Review (rentalId is a required relation),
+// silently destroying someone's review along with a booking they're
+// just trying to tidy up from their history.
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<IParams> }
@@ -23,17 +29,40 @@ export async function DELETE(
         throw new Error('Invalid ID');
     }
 
-    const rental = await prisma.rental.deleteMany({
-        where: {
-            id: rentalId,
-            OR: [
-                { userId: currentUser.id },
-                { gear: { userId: currentUser.id } }
-            ]
-        }
+    const rental = await prisma.rental.findUnique({
+        where: { id: rentalId },
+        include: { gear: true },
     });
 
-    return NextResponse.json(rental);
+    const isParticipant = rental && (
+        rental.userId === currentUser.id ||
+        rental.gear.userId === currentUser.id
+    );
+
+    if (!rental || !isParticipant) {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    if (rental.status === 'cancelled') {
+        return NextResponse.json(
+            { error: '這筆租借已經取消過了' },
+            { status: 400 }
+        );
+    }
+
+    if (rental.startDate <= new Date()) {
+        return NextResponse.json(
+            { error: '租借已經開始或結束，無法取消' },
+            { status: 400 }
+        );
+    }
+
+    const updated = await prisma.rental.update({
+        where: { id: rentalId },
+        data: { status: 'cancelled' },
+    });
+
+    return NextResponse.json(updated);
 }
 
 // Records the gear's condition at return time and resolves the deposit
@@ -74,6 +103,13 @@ export async function PATCH(
 
     if (!rental || rental.gear.userId !== currentUser.id) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    if (rental.status === 'cancelled') {
+        return NextResponse.json(
+            { error: '這筆租借已經取消，無法確認歸還' },
+            { status: 400 }
+        );
     }
 
     const depositStatus = REFUNDABLE_CONDITIONS.includes(returnCondition)

@@ -19,6 +19,7 @@ interface GearCardProps {
     actionId?: string,
     secondaryActionLabel?: string,
     onSecondaryAction?: (id: string) => void,
+    statusBadge?: string,
     currentUser?: SafeUser | null
 }
 
@@ -31,6 +32,7 @@ const GearCard: React.FC<GearCardProps> = ({
     actionId = "",
     secondaryActionLabel,
     onSecondaryAction,
+    statusBadge,
     currentUser
 }) => {
     const router = useRouter();
@@ -104,8 +106,13 @@ const GearCard: React.FC<GearCardProps> = ({
                 <div className="font-semibold text-lg">
                     {location?.label} · {location?.region}
                 </div>
-                <div className="font-light text-neutral-500">
+                <div className="flex flex-row items-center gap-2 font-light text-neutral-500">
                     {rentalDate || data.category}
+                    {statusBadge && (
+                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600">
+                            {statusBadge}
+                        </span>
+                    )}
                 </div>
                 <div className="flex flex-row items-center gap-1">
                     <div className="font-semibold">
