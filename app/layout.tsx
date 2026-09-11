@@ -1,6 +1,7 @@
 import { Barlow } from 'next/font/google'
 
 import Navbar from '@/app/components/Navbar/Navbar';
+import Footer from '@/app/components/Footer';
 import LoginModal from '@/app/components/Modals/LoginModal';
 import RegisterModal from '@/app/components/Modals/RegisterModal';
 import RentModal from './components/Modals/RentModal';
@@ -35,7 +36,7 @@ export default async function RootLayout({
 
     return (
         <html lang="en" className={cn("font-sans", font.variable)}>
-        <body className={font.className}>
+        <body className={cn(font.className, "flex min-h-screen flex-col")}>
             <ClientOnly>
                 <ToasterProvider />
                 <LoginModal />
@@ -43,9 +44,10 @@ export default async function RootLayout({
                 <RegisterModal />
                 <Navbar currentUser={currentUser} />
             </ClientOnly>
-            <div className="pb-20 pt-28">
+            <div className="flex-1 pb-20 pt-28">
                 {children}
             </div>
+            <Footer />
         </body>
         </html>
     )
