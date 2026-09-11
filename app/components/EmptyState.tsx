@@ -6,13 +6,13 @@ import Button from "./Button";
 interface EmptyStateProps {
     title?: string,
     subtitle?: string,
-    showReaet?: boolean
+    showReset?: boolean
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
-    title = 'NO exct matches',
-    subtitle = 'Try changing or removing some of your filters.',
-    showReaet
+    title = '找不到符合的結果',
+    subtitle = '試著調整或清除篩選條件。',
+    showReset
 }) => {
     const router = useRouter();
     return (
@@ -23,10 +23,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({
                 subtitle={subtitle}
             />
             <div className="w-48 mt-4">
-                {showReaet &&(
-                    <Button 
+                {showReset &&(
+                    <Button
                         outline
-                        label="Remove all filters"
+                        label="清除篩選條件"
                         onClick={() => router.push('/') }
                     />
                 )}

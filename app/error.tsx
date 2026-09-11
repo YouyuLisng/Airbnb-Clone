@@ -15,7 +15,7 @@ const ErrorState: React.FC<ErrorStateProps> = ({
     }, [error]);
     return (
         <EmptyState
-            title="Uh Oh"
+            title="發生錯誤"
             subtitle="遇到了一點錯誤...."
         />
     );

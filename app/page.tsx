@@ -20,7 +20,7 @@ const Home = async ({ searchParams } : HomeProps) => {
     if(gear.length === 0) {
         return (
             <ClientOnly>
-                <EmptyState showReaet />
+                <EmptyState showReset />
             </ClientOnly>
         )
     }
