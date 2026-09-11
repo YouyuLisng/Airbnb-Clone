@@ -6,6 +6,8 @@
 
 # GearShare
 
+**Live demo:** [gearshare-liard.vercel.app](https://gearshare-liard.vercel.app)
+
 A peer-to-peer marketplace for renting outdoor gear (tents, sleeping bags,
 cameras, and the like) directly from other people instead of a single shop's
 own inventory — think Airbnb, but for the gear you only need for one trip.
