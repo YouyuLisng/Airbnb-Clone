@@ -46,7 +46,6 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
     "react-select": "^5.10.2",
-    "react-spinners": "^0.17.1",
     "swr": "^2.5.1",
     "typescript": "^6.0.3",
     "zustand": "^5.0.15"
