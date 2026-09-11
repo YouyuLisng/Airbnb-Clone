@@ -132,6 +132,7 @@ const GearClient: React.FC<GearClientProps> = ({
               <GearHead
                 title={gear.title}
                 imageSrc={gear.imageSrc}
+                imageSrcs={gear.imageSrcs}
                 locationValue={gear.locationValue}
                 id={gear.id}
                 ownerId={gear.userId}

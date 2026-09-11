@@ -19,6 +19,7 @@ import { categories } from "../Navbar/Categories";
 import RegionSelect from "../Input/RegionSelect";
 import dynamic from "next/dynamic";
 import ImageUpload from "../Input/ImageUpload";
+import MultiImageUpload from "../Input/MultiImageUpload";
 import Input from "../Input/Input";
 import axios from "axios";
 import { toast } from "sonner";
@@ -68,6 +69,7 @@ const RentModal = () => {
             location: null,
             condition: '',
             imageSrc: '',
+            imageSrcs: [] as string[],
             depositAmount: 1,
             pricePerDay: 1,
             title: '',
@@ -78,6 +80,7 @@ const RentModal = () => {
     const location = watch('location');
     const condition = watch('condition');
     const imageSrc = watch('imageSrc');
+    const imageSrcs = watch('imageSrcs');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -207,6 +210,16 @@ const RentModal = () => {
                     value={imageSrc}
                     onChange={(value) => setCustomValue('imageSrc', value)}
                 />
+                <div className="flex flex-col gap-3">
+                    <Heading
+                        title="更多照片（選填）"
+                        subtitle="最多可以再上傳 6 張，讓租借者更了解裝備狀況"
+                    />
+                    <MultiImageUpload
+                        value={imageSrcs}
+                        onChange={(value) => setCustomValue('imageSrcs', value)}
+                    />
+                </div>
             </div>
         )
     }

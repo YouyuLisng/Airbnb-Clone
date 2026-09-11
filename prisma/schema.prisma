@@ -53,6 +53,7 @@ model Gear {
   title         String
   description   String
   imageSrc      String
+  imageSrcs     String[] @default([])
   createdAt     DateTime @default(now())
   category      String
   condition     String

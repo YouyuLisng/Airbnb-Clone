@@ -71,6 +71,27 @@ describe('POST /api/gear', () => {
                 depositAmount: 1000,
                 pricePerDay: 250,
                 userId: 'user-1',
+                imageSrcs: [],
+            }),
+        });
+    });
+
+    it('stores extra gallery images when imageSrcs is provided', async () => {
+        await POST(makeRequest({ ...validBody, imageSrcs: ['https://example.com/a.png', 'https://example.com/b.png'] }));
+
+        expect(mockCreate).toHaveBeenCalledWith({
+            data: expect.objectContaining({
+                imageSrcs: ['https://example.com/a.png', 'https://example.com/b.png'],
+            }),
+        });
+    });
+
+    it('drops non-string entries and ignores a non-array imageSrcs', async () => {
+        await POST(makeRequest({ ...validBody, imageSrcs: ['https://example.com/a.png', 42, null] }));
+
+        expect(mockCreate).toHaveBeenCalledWith({
+            data: expect.objectContaining({
+                imageSrcs: ['https://example.com/a.png'],
             }),
         });
     });

@@ -17,6 +17,7 @@ export async function POST(
         title,
         description,
         imageSrc,
+        imageSrcs,
         category,
         condition,
         location,
@@ -53,6 +54,9 @@ export async function POST(
         title,
         description,
         imageSrc,
+        imageSrcs: Array.isArray(imageSrcs)
+            ? imageSrcs.filter((src): src is string => typeof src === 'string')
+            : [],
         category,
         condition,
         locationValue: location.value,
