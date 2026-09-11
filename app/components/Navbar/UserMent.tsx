@@ -81,7 +81,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger className="block rounded-full border-0 bg-transparent p-0 outline-none ring-offset-2 transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring">
-                    <Avatar src={currentUser.image} />
+                    <Avatar src={currentUser.image} name={currentUser.name} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel className="text-neutral-500 font-normal">

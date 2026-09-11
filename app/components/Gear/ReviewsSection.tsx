@@ -43,7 +43,7 @@ const ReviewsSection: React.FC<ReviewsSectionProps> = ({ reviews }) => {
                             className="flex flex-col gap-1 border-b border-neutral-200 pb-4 last:border-0"
                         >
                             <div className="flex flex-row items-center gap-2">
-                                <Avatar src={review.user.image} />
+                                <Avatar src={review.user.image} name={review.user.name} />
                                 <div className="font-semibold">{review.user.name}</div>
                                 <StarRating value={review.rating} size={14} />
                             </div>

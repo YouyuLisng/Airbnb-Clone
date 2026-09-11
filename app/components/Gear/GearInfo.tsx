@@ -46,7 +46,7 @@ const GearInfo: React.FC<GearInfoProps> = ({
                     <div>
                         出租者：{user?.name}
                     </div>
-                    <Avatar src={user?.image} />
+                    <Avatar src={user?.image} name={user?.name} />
                 </div>
                 <div className=" flex flex-row items-center gap-4 font-light text-neutral-500">
                     <div>
