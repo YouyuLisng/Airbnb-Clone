@@ -49,6 +49,7 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
                         alt="Gallery"
                         src={url}
                         fill
+                        sizes="96px"
                         style={{ objectFit: 'cover' }}
                     />
                     <button

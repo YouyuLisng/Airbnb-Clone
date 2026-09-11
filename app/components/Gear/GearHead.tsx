@@ -47,6 +47,7 @@ const GearHead: React.FC<GearHeadProps> = ({
                     alt="Image"
                     src={activePhoto}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 1024px"
                     className="object-cover w-full"
                 />
                 {currentUser?.id !== ownerId && (
@@ -74,6 +75,7 @@ const GearHead: React.FC<GearHeadProps> = ({
                                 alt={`${title} ${index + 1}`}
                                 src={photo}
                                 fill
+                                sizes="80px"
                                 className="object-cover"
                             />
                         </button>

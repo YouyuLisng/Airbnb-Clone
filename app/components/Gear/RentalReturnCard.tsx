@@ -73,6 +73,7 @@ const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental, onMessage }
                         fill
                         alt={rental.gear.title}
                         src={rental.gear.imageSrc}
+                        sizes="80px"
                         className="object-cover"
                     />
                 </div>
