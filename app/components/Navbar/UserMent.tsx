@@ -9,6 +9,7 @@ import {
     Package,
     PackagePlus,
     Tent,
+    User,
     Users
 } from 'lucide-react';
 
@@ -88,6 +89,10 @@ const UserMenu: React.FC<UserMenuProps> = ({
                         {currentUser.name}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => router.push('/profile')}>
+                        <User className="text-neutral-500" size={16} />
+                        個人資料
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => router.push('/renting')}>
                         <Package className="text-neutral-500" size={16} />
                         我承租的裝備
