@@ -22,7 +22,7 @@ const CategoryInput: React.FC<CategoryInputProps> = ({
             type="button"
             onClick={() => onClick(label)}
             className={cn(
-                "flex flex-col gap-3 rounded-xl border-2 p-4 text-left outline-none transition hover:border-primary focus-visible:ring-2 focus-visible:ring-ring",
+                "flex w-full flex-col gap-3 rounded-xl border-2 p-4 text-left outline-none transition hover:border-primary focus-visible:ring-2 focus-visible:ring-ring",
                 selected ? "border-primary text-primary" : "border-border"
             )}
         >
