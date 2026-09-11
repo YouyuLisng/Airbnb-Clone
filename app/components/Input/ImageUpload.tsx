@@ -1,8 +1,10 @@
 "use client"; // 上傳圖片
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadWidget, type CloudinaryUploadWidgetResults } from "next-cloudinary";
 import Image from "next/image";
 import { useCallback } from "react";
 import { TbPhotoPlus } from "react-icons/tb";
+
+import { cn } from "@/app/libs/utils";
 
 declare global {
     var cloudinary: any;
@@ -18,13 +20,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     value
 }) => {
 
-    const handleUpload = useCallback((result: any) => {
-        onChange(result.info.secure_url);
+    const handleUpload = useCallback((result: CloudinaryUploadWidgetResults) => {
+        if (typeof result.info === "object" && result.info?.secure_url) {
+            onChange(result.info.secure_url);
+        }
     }, [onChange]);
 
     return (
-        <CldUploadWidget 
-            onUpload={handleUpload} 
+        <CldUploadWidget
+            onUpload={handleUpload}
             uploadPreset="jf3yjihr"
             options={{
                 maxFiles: 1
@@ -32,17 +36,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         >
         {({ open }) => {
             return(
-                <div
+                <button
+                    type="button"
                     onClick={() => open?.()}
-                    className="relative cursor-pointer hover:opacity-70 transition border-dashed border-2 p-20 border-neutral-300 flex flex-col justify-center items-center gap-4 text-neutral-600"
+                    className={cn(
+                        "relative flex w-full flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-border p-20 text-muted-foreground outline-none transition hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring"
+                    )}
                 >
                     <TbPhotoPlus size={50} />
                     <div className="font-semibold text-lg">
                         點擊上傳圖片
                     </div>
                     {value &&(
-                        <div className=" absolute inset-0 w-full h-full">
-                            <Image 
+                        <div className="absolute inset-0 h-full w-full">
+                            <Image
                                 alt="Upload"
                                 fill
                                 style={{ objectFit: 'cover' }}
@@ -50,7 +57,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                             />
                         </div>
                     )}
-                </div>
+                </button>
             )
         }}
         </CldUploadWidget>

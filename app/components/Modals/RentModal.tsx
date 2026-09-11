@@ -13,7 +13,7 @@ import {
 } from "react-icons/ai";
 
 import Heading from "../Navbar/Heading";
-import CategoryInput from "../Input/CategoryInpit";
+import CategoryInput from "../Input/CategoryInput";
 
 import { categories } from "../Navbar/Categories";
 import RegionSelect from "../Input/RegionSelect";

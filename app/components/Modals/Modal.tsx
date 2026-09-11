@@ -78,14 +78,18 @@ const Modal: React.FC<ModalProps> = ({
                 <DialogFooter className="flex flex-col gap-2 p-6 pt-0 sm:flex-col">
                     <div className="flex flex-row items-center gap-4 w-full">
                         {secondaryAction && secondaryActionLabel && (
-                            <Button
-                                disabled={disabled}
-                                label={secondaryActionLabel}
-                                onClick={handleSecondaryAction}
-                                outline
-                            />
+                            <div className="min-w-0 flex-1">
+                                <Button
+                                    disabled={disabled}
+                                    label={secondaryActionLabel}
+                                    onClick={handleSecondaryAction}
+                                    outline
+                                />
+                            </div>
                         )}
-                        <Button disabled={disabled} onClick={handleSubmit} label={actionLabel} />
+                        <div className="min-w-0 flex-1">
+                            <Button disabled={disabled} onClick={handleSubmit} label={actionLabel} />
+                        </div>
                     </div>
                     {footer}
                 </DialogFooter>
