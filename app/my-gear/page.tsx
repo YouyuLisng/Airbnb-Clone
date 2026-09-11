@@ -19,7 +19,7 @@ const MyGearPage = async () => {
         )
     }
 
-    const gear = await getGear({
+    const { gear } = await getGear({
         userId: currentUser.id
     });
 

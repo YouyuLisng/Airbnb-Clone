@@ -7,25 +7,30 @@ vi.mock('@/app/libs/prismadb', () => ({
     default: {
         gear: {
             findMany: vi.fn(),
+            count: vi.fn(),
         },
     },
 }));
 
 const mockFindMany = prisma.gear.findMany as unknown as ReturnType<typeof vi.fn>;
+const mockCount = prisma.gear.count as unknown as ReturnType<typeof vi.fn>;
 
 describe('getGear', () => {
     beforeEach(() => {
         mockFindMany.mockReset();
+        mockCount.mockReset();
         mockFindMany.mockResolvedValue([]);
+        mockCount.mockResolvedValue(0);
     });
 
-    it('builds an empty where-clause when no filters are given', async () => {
+    it('builds an empty where-clause and skips pagination when no page is given', async () => {
         await getGear({});
 
         expect(mockFindMany).toHaveBeenCalledWith({
             where: {},
             orderBy: { createdAt: 'desc' },
         });
+        expect(mockCount).not.toHaveBeenCalled();
     });
 
     it('filters by userId and category', async () => {
@@ -55,9 +60,9 @@ describe('getGear', () => {
         const createdAt = new Date('2026-01-01T00:00:00.000Z');
         mockFindMany.mockResolvedValue([{ id: '1', createdAt }]);
 
-        const [item] = await getGear({});
+        const { gear } = await getGear({});
 
-        expect(item.createdAt).toBe(createdAt.toISOString());
+        expect(gear[0].createdAt).toBe(createdAt.toISOString());
     });
 
     it('rethrows the original error on failure instead of wrapping it', async () => {
@@ -65,5 +70,32 @@ describe('getGear', () => {
         mockFindMany.mockRejectedValue(original);
 
         await expect(getGear({})).rejects.toBe(original);
+    });
+
+    it('applies skip/take and counts total pages when a page is given', async () => {
+        mockCount.mockResolvedValue(25);
+
+        const result = await getGear({ page: 2 });
+
+        expect(mockFindMany).toHaveBeenCalledWith({
+            where: {},
+            orderBy: { createdAt: 'desc' },
+            skip: 12,
+            take: 12,
+        });
+        expect(mockCount).toHaveBeenCalledWith({ where: {} });
+        expect(result.totalPages).toBe(3);
+        expect(result.page).toBe(2);
+    });
+
+    it('treats a non-positive page as unpaginated', async () => {
+        const result = await getGear({ page: 0 });
+
+        expect(mockFindMany).toHaveBeenCalledWith({
+            where: {},
+            orderBy: { createdAt: 'desc' },
+        });
+        expect(result.totalPages).toBe(1);
+        expect(result.page).toBe(1);
     });
 });
