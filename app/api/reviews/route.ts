@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
+import { notify } from "@/app/libs/notify";
 
 export async function POST(request: Request) {
     const currentUser = await getCurrentUser();
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
 
     const rental = await prisma.rental.findUnique({
         where: { id: rentalId },
-        include: { review: true },
+        include: { review: true, gear: true },
     });
 
     if (!rental || rental.userId !== currentUser.id) {
@@ -58,6 +59,14 @@ export async function POST(request: Request) {
             rating: ratingNumber,
             comment: comment.trim(),
         },
+    });
+
+    await notify({
+        userId: rental.gear.userId,
+        type: "review_received",
+        title: "收到新評價",
+        body: `「${rental.gear.title}」收到了一則新評價`,
+        link: `/gear/${rental.gearId}`,
     });
 
     return NextResponse.json(review);

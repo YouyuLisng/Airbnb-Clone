@@ -21,11 +21,13 @@ model User {
   updatedAt      DateTime  @updatedAt
   favoriteIds    String[]  @db.ObjectId
 
-  accounts Account[]
-  gear     Gear[]
-  rentals  Rental[]
-  reviews  Review[]
-  payments Payment[]
+  accounts      Account[]
+  gear          Gear[]
+  rentals       Rental[]
+  reviews       Review[]
+  payments      Payment[]
+  messages      Message[]
+  notifications Notification[]
 }
 
 model Account {
@@ -82,9 +84,43 @@ model Rental {
   returnCondition String?
   createdAt       DateTime @default(now())
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  gear   Gear    @relation(fields: [gearId], references: [id], onDelete: Cascade)
-  review Review?
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gear     Gear      @relation(fields: [gearId], references: [id], onDelete: Cascade)
+  review   Review?
+  messages Message[]
+}
+
+// A chat message between the renter and the gear owner, scoped to one
+// rental -- that's the natural conversation context in a P2P rental app
+// (as opposed to a general inbox), and it's what a message thread needs
+// to check "are you actually a participant here" against.
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  rentalId  String   @db.ObjectId
+  senderId  String   @db.ObjectId
+  body      String
+  createdAt DateTime @default(now())
+
+  rental Rental @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  sender User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+// A lightweight in-app notification -- link points back into the app
+// (a rental, a message thread) for the bell dropdown to navigate to.
+// No email/push: that would need an external email service this
+// project doesn't have credentials for (same situation as LINE Pay
+// needing its own Sandbox account).
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  type      String // message | rental_confirmed | rental_cancelled | review_received | deposit_resolved
+  title     String
+  body      String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // A renter's rating/comment for a completed rental. One review per

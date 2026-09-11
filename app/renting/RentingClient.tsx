@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import Container from "../components/Container";
 import GearCard from "../components/Gear/GearCard";
 import ReviewFormModal from "../components/Gear/ReviewFormModal";
+import MessageThreadModal from "../components/Gear/MessageThreadModal";
 import Heading from "../components/Navbar/Heading";
 import { SafeRental, SafeUser } from "../types";
 import useDeleteAction from "../hooks/useDeleteAction";
@@ -27,6 +28,7 @@ const RentingClient: React.FC<RentingClientProps> = ({
     const router = useRouter();
     const searchParams = useSearchParams();
     const [reviewingRentalId, setReviewingRentalId] = useState<string | null>(null);
+    const [messagingRentalId, setMessagingRentalId] = useState<string | null>(null);
 
     useEffect(() => {
         const payment = searchParams.get('payment');
@@ -100,6 +102,7 @@ const RentingClient: React.FC<RentingClientProps> = ({
                                 ? setReviewingRentalId
                                 : undefined
                         }
+                        onMessage={setMessagingRentalId}
                         currentUser={currentUser}
                     />
                 ))}
@@ -109,6 +112,15 @@ const RentingClient: React.FC<RentingClientProps> = ({
                     rentalId={reviewingRentalId}
                     isOpen={!!reviewingRentalId}
                     onClose={() => setReviewingRentalId(null)}
+                />
+            )}
+            {messagingRentalId && currentUser && (
+                <MessageThreadModal
+                    rentalId={messagingRentalId}
+                    gearTitle={rentals.find((r) => r.id === messagingRentalId)?.gear.title ?? ''}
+                    isOpen={!!messagingRentalId}
+                    onClose={() => setMessagingRentalId(null)}
+                    currentUser={currentUser}
                 />
             )}
         </Container>

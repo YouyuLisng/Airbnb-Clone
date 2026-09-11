@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 
 import Avatar from '../Avatar';
+import NotificationBell from './NotificationBell';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -80,6 +81,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
             >
                 在 GearShare 上架裝備
             </div>
+            <NotificationBell />
             <DropdownMenu>
                 <DropdownMenuTrigger className="block rounded-full border-0 bg-transparent p-0 outline-none ring-offset-2 transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring">
                     <Avatar src={currentUser.image} name={currentUser.name} />

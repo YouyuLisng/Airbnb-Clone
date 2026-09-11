@@ -1,6 +1,9 @@
 "use client";
+import { useState } from "react";
+
 import Container from "../components/Container";
 import RentalReturnCard from "../components/Gear/RentalReturnCard";
+import MessageThreadModal from "../components/Gear/MessageThreadModal";
 import Heading from "../components/Navbar/Heading";
 
 import { SafeRental, SafeUser } from "../types";
@@ -12,7 +15,10 @@ interface LendingClientProps {
 
 const LendingClient: React.FC<LendingClientProps> = ({
     rentals,
+    currentUser
 }) => {
+    const [messagingRentalId, setMessagingRentalId] = useState<string | null>(null);
+
     return (
         <Container>
             <Heading
@@ -24,9 +30,19 @@ const LendingClient: React.FC<LendingClientProps> = ({
                     <RentalReturnCard
                         key={rental.id}
                         rental={rental}
+                        onMessage={setMessagingRentalId}
                     />
                 ))}
             </div>
+            {messagingRentalId && currentUser && (
+                <MessageThreadModal
+                    rentalId={messagingRentalId}
+                    gearTitle={rentals.find((r) => r.id === messagingRentalId)?.gear.title ?? ''}
+                    isOpen={!!messagingRentalId}
+                    onClose={() => setMessagingRentalId(null)}
+                    currentUser={currentUser}
+                />
+            )}
         </Container>
     );
 }

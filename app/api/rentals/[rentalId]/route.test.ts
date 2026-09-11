@@ -10,12 +10,14 @@ vi.mock('@/app/actions/getCurrentUser');
 vi.mock('@/app/libs/prismadb', () => ({
     default: {
         rental: { findUnique: vi.fn(), update: vi.fn() },
+        notification: { create: vi.fn() },
     },
 }));
 
 const mockGetCurrentUser = getCurrentUser as unknown as ReturnType<typeof vi.fn>;
 const mockFindUnique = prisma.rental.findUnique as unknown as ReturnType<typeof vi.fn>;
 const mockUpdate = prisma.rental.update as unknown as ReturnType<typeof vi.fn>;
+const mockCreateNotification = prisma.notification.create as unknown as ReturnType<typeof vi.fn>;
 
 const futureRental = {
     id: 'rental-1',
@@ -24,7 +26,7 @@ const futureRental = {
     status: 'confirmed',
     startDate: new Date('2999-01-01'),
     endDate: new Date('2999-01-03'),
-    gear: { userId: 'owner-1' },
+    gear: { userId: 'owner-1', title: '帳篷' },
 };
 
 function makeRequest(method: string, body?: unknown) {
@@ -53,6 +55,12 @@ describe('DELETE /api/rentals/[rentalId] (cancel)', () => {
         expect(mockUpdate).toHaveBeenCalledWith({
             where: { id: 'rental-1' },
             data: { status: 'cancelled' },
+        });
+        expect(mockCreateNotification).toHaveBeenCalledWith({
+            data: expect.objectContaining({
+                userId: 'owner-1',
+                type: 'rental_cancelled',
+            }),
         });
     });
 
@@ -116,6 +124,12 @@ describe('PATCH /api/rentals/[rentalId] (confirm return)', () => {
         expect(mockUpdate).toHaveBeenCalledWith({
             where: { id: 'rental-1' },
             data: { returnCondition: '良好', depositStatus: 'refunded' },
+        });
+        expect(mockCreateNotification).toHaveBeenCalledWith({
+            data: expect.objectContaining({
+                userId: 'renter-1',
+                type: 'deposit_resolved',
+            }),
         });
     });
 });

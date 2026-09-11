@@ -11,12 +11,14 @@ vi.mock('@/app/libs/prismadb', () => ({
     default: {
         rental: { findUnique: vi.fn() },
         review: { create: vi.fn() },
+        notification: { create: vi.fn() },
     },
 }));
 
 const mockGetCurrentUser = getCurrentUser as unknown as ReturnType<typeof vi.fn>;
 const mockFindUnique = prisma.rental.findUnique as unknown as ReturnType<typeof vi.fn>;
 const mockCreate = prisma.review.create as unknown as ReturnType<typeof vi.fn>;
+const mockCreateNotification = prisma.notification.create as unknown as ReturnType<typeof vi.fn>;
 
 const validBody = {
     rentalId: 'rental-1',
@@ -30,6 +32,7 @@ const pastRental = {
     gearId: 'gear-1',
     endDate: new Date('2020-01-01'),
     review: null,
+    gear: { userId: 'owner-1', title: '帳篷' },
 };
 
 function makeRequest(body: unknown) {
@@ -110,6 +113,12 @@ describe('POST /api/reviews', () => {
                 rating: 5,
                 comment: validBody.comment,
             },
+        });
+        expect(mockCreateNotification).toHaveBeenCalledWith({
+            data: expect.objectContaining({
+                userId: 'owner-1',
+                type: 'review_received',
+            }),
         });
     });
 });

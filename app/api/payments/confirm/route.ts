@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
 import { confirmPayment } from "@/app/libs/linepay";
+import { notify } from "@/app/libs/notify";
 
 // LINE Pay redirects the user's browser here after they approve the
 // payment on LINE Pay's hosted checkout page. This finalizes the charge
@@ -54,11 +55,20 @@ export async function GET(request: Request) {
             endDate: payment.endDate,
             totalPrice: payment.rentalFee,
         },
+        include: { gear: true },
     });
 
     await prisma.payment.update({
         where: { id: payment.id },
         data: { status: "confirmed", rentalId: rental.id },
+    });
+
+    await notify({
+        userId: rental.gear.userId,
+        type: "rental_confirmed",
+        title: "有新的租借訂單",
+        body: `你的「${rental.gear.title}」已被租借`,
+        link: "/lending",
     });
 
     return NextResponse.redirect(new URL("/renting?payment=success", request.url));

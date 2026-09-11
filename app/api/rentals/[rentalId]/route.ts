@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
+import { notify } from "@/app/libs/notify";
 
 interface IParams {
     rentalId?: string;
@@ -62,6 +63,17 @@ export async function DELETE(
         data: { status: 'cancelled' },
     });
 
+    const isRenter = rental.userId === currentUser.id;
+    const recipientId = isRenter ? rental.gear.userId : rental.userId;
+
+    await notify({
+        userId: recipientId,
+        type: "rental_cancelled",
+        title: "租借已取消",
+        body: `「${rental.gear.title}」的租借已被${isRenter ? '承租者' : '出租者'}取消`,
+        link: isRenter ? "/lending" : "/renting",
+    });
+
     return NextResponse.json(updated);
 }
 
@@ -119,6 +131,14 @@ export async function PATCH(
     const updated = await prisma.rental.update({
         where: { id: rentalId },
         data: { returnCondition, depositStatus },
+    });
+
+    await notify({
+        userId: rental.userId,
+        type: "deposit_resolved",
+        title: depositStatus === 'refunded' ? "押金已退還" : "押金已沒收",
+        body: `「${rental.gear.title}」的歸還狀況為「${returnCondition}」`,
+        link: "/renting",
     });
 
     return NextResponse.json(updated);

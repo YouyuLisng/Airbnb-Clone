@@ -6,6 +6,7 @@ import useRegions from "@/app/hooks/useRegions";
 import { useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
+import { MessageCircle } from "lucide-react";
 import HeartButton from "../HeartButton";
 import Button from "../Button";
 
@@ -20,6 +21,7 @@ interface GearCardProps {
     secondaryActionLabel?: string,
     onSecondaryAction?: (id: string) => void,
     statusBadge?: string,
+    onMessage?: (id: string) => void,
     currentUser?: SafeUser | null
 }
 
@@ -33,6 +35,7 @@ const GearCard: React.FC<GearCardProps> = ({
     secondaryActionLabel,
     onSecondaryAction,
     statusBadge,
+    onMessage,
     currentUser
 }) => {
     const router = useRouter();
@@ -60,6 +63,13 @@ const GearCard: React.FC<GearCardProps> = ({
 
             onSecondaryAction?.(actionId)
         }, [actionId, onSecondaryAction, disabled]
+    );
+
+    const handleMessage = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            onMessage?.(actionId)
+        }, [actionId, onMessage]
     );
 
     const price = useMemo(() => {
@@ -101,6 +111,16 @@ const GearCard: React.FC<GearCardProps> = ({
                                 currentUser={currentUser}
                             />
                         </div>
+                    )}
+                    {onMessage && (
+                        <button
+                            type="button"
+                            onClick={handleMessage}
+                            aria-label="傳送訊息"
+                            className="absolute top-3 left-3 rounded-full bg-white/90 p-1.5 text-neutral-700 shadow hover:bg-white transition"
+                        >
+                            <MessageCircle size={16} />
+                        </button>
                     )}
                 </div>
                 <div className="font-semibold text-lg">

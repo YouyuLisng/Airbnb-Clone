@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import Image from "next/image";
+import { MessageCircle } from "lucide-react";
 
 import Button from "../Button";
 import { SafeRental } from "@/app/types";
@@ -32,6 +33,7 @@ const DEPOSIT_STATUS_COLOR: Record<string, string> = {
 
 interface RentalReturnCardProps {
     rental: SafeRental;
+    onMessage?: (id: string) => void;
 }
 
 // Lets the gear owner (lender) record the item's condition when it's
@@ -39,7 +41,7 @@ interface RentalReturnCardProps {
 // it, anything else forfeits it. This is the lending-side half of the
 // deposit lifecycle -- the renter pays the deposit implicitly when the
 // rental is created (see RentalBox), the lender resolves it here.
-const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental }) => {
+const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental, onMessage }) => {
     const router = useRouter();
     const [condition, setCondition] = useState(RETURN_CONDITIONS[0]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,12 +84,24 @@ const RentalReturnCard: React.FC<RentalReturnCardProps> = ({ rental }) => {
                     <div className="text-sm text-neutral-500">
                         押金 ${rental.gear.depositAmount} TWD
                     </div>
-                    <span className={`
-                        mt-1 w-fit px-2 py-0.5 rounded-full text-xs font-semibold
-                        ${isCancelled ? 'bg-neutral-100 text-neutral-600' : DEPOSIT_STATUS_COLOR[rental.depositStatus]}
-                    `}>
-                        {isCancelled ? '已取消' : DEPOSIT_STATUS_LABEL[rental.depositStatus]}
-                    </span>
+                    <div className="mt-1 flex flex-row items-center gap-2">
+                        <span className={`
+                            w-fit px-2 py-0.5 rounded-full text-xs font-semibold
+                            ${isCancelled ? 'bg-neutral-100 text-neutral-600' : DEPOSIT_STATUS_COLOR[rental.depositStatus]}
+                        `}>
+                            {isCancelled ? '已取消' : DEPOSIT_STATUS_LABEL[rental.depositStatus]}
+                        </span>
+                        {onMessage && (
+                            <button
+                                type="button"
+                                onClick={() => onMessage(rental.id)}
+                                aria-label="傳送訊息"
+                                className="rounded-full p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition"
+                            >
+                                <MessageCircle size={14} />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
             <hr />
