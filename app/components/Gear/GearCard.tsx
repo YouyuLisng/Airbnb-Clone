@@ -94,6 +94,7 @@ const GearCard: React.FC<GearCardProps> = ({
     return (
         <div
             onClick={() => router.push(`/gear/${data.id}`)}
+            data-gear-id={data.id}
             className="col-span-1 cursor-pointer group"
         >
             <div className="flex flex-col gap-2 w-full">

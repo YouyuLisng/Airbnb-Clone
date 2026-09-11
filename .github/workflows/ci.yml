@@ -6,14 +6,13 @@ on:
   pull_request:
     branches: [main]
 
-# Dummy values only: the app just needs these env vars to be *set* for
-# `prisma generate` / `next build` to run (Prisma only reads the schema
-# locally at generate time -- it doesn't connect to the database). Unit
-# tests mock Prisma entirely, and the E2E suite is scoped to
-# JWT-session-only flows, so nothing in this workflow ever touches a real
-# database or a real OAuth provider.
 env:
-  DATABASE_URL: "mongodb+srv://user:pass@dummy.mongodb.net/ci"
+  # Real for the DB-backed steps (a local MongoDB replica set started
+  # below), dummy for everything else -- unit tests mock Prisma
+  # entirely and don't need it, but `prisma generate`/`next build` just
+  # need *some* value set to run at all (Prisma only reads the schema
+  # locally at generate time, it doesn't connect).
+  DATABASE_URL: "mongodb://127.0.0.1:27017/ci?replicaSet=rs0"
   NEXTAUTH_SECRET: "ci-dummy-secret"
   NEXTAUTH_JWT_SECRET: "ci-dummy-jwt-secret"
   GITHUB_ID: "ci-dummy"
@@ -48,8 +47,32 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Prisma's MongoDB connector needs a replica set (even a single-
+      # node one) to support transactions -- GitHub Actions' `services:`
+      # key can't override a service container's startup command, so
+      # this starts mongod directly with `docker run` instead and
+      # initiates the replica set once it's reachable.
+      - name: Start MongoDB (single-node replica set)
+        run: |
+          docker run -d --name mongo -p 27017:27017 mongo:7 --replSet rs0 --bind_ip_all
+          for i in $(seq 1 30); do
+            docker exec mongo mongosh --quiet --eval "db.runCommand({ ping: 1 })" && break
+            sleep 1
+          done
+          docker exec mongo mongosh --eval "rs.initiate()"
+          for i in $(seq 1 30); do
+            docker exec mongo mongosh --quiet --eval "rs.status().myState" | grep -q '^1$' && break
+            sleep 1
+          done
+
+      - name: Sync database schema
+        run: npx prisma db push
+
+      - name: Seed E2E test data
+        run: node e2e/seed.ts
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: E2E smoke tests
+      - name: E2E tests
         run: npm run test:e2e
