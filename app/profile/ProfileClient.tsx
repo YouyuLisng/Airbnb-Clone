@@ -69,6 +69,49 @@ const ProfileClient: React.FC<ProfileClientProps> = ({
             });
     };
 
+    // Separate form/state from the profile-info one above -- different
+    // submit target (a dedicated endpoint that re-verifies the current
+    // password server-side), no reason to couple their loading/dirty
+    // state together.
+    const hasExistingPassword = !!currentUser.hashedPassword;
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const {
+        register: registerPassword,
+        handleSubmit: handleSubmitPassword,
+        reset: resetPasswordForm,
+        formState: { errors: passwordErrors }
+    } = useForm<FieldValues>({
+        defaultValues: {
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: '',
+        }
+    });
+
+    const onSubmitPassword: SubmitHandler<FieldValues> = useCallback((data) => {
+        if (data.newPassword !== data.confirmPassword) {
+            toast.error('兩次輸入的新密碼不一致');
+            return;
+        }
+
+        setIsChangingPassword(true);
+
+        axios.patch('/api/profile/password', {
+            currentPassword: data.currentPassword,
+            newPassword: data.newPassword,
+        })
+            .then(() => {
+                toast.success('密碼已更新');
+                resetPasswordForm();
+            })
+            .catch((error) => {
+                toast.error(error.response?.data?.error || 'Something went wrong.');
+            })
+            .finally(() => {
+                setIsChangingPassword(false);
+            });
+    }, [resetPasswordForm]);
+
     return (
         <Container>
             <div className="max-w-screen-sm mx-auto flex flex-col gap-8">
@@ -106,6 +149,56 @@ const ProfileClient: React.FC<ProfileClientProps> = ({
                         label="儲存變更"
                         onClick={handleSubmit(onSubmit)}
                     />
+                </div>
+
+                <hr />
+
+                <div className="flex flex-col gap-4">
+                    <Heading
+                        title="變更密碼"
+                        subtitle={
+                            hasExistingPassword
+                                ? "輸入目前密碼以設定新密碼"
+                                : "你的帳號目前是用第三方登入建立的，設定密碼後也可以用 Email/密碼登入"
+                        }
+                    />
+                    {hasExistingPassword && (
+                        <Input
+                            id="currentPassword"
+                            label="目前密碼"
+                            type="password"
+                            disabled={isChangingPassword}
+                            register={registerPassword}
+                            errors={passwordErrors}
+                            required
+                        />
+                    )}
+                    <Input
+                        id="newPassword"
+                        label="新密碼"
+                        type="password"
+                        disabled={isChangingPassword}
+                        register={registerPassword}
+                        errors={passwordErrors}
+                        required
+                    />
+                    <Input
+                        id="confirmPassword"
+                        label="確認新密碼"
+                        type="password"
+                        disabled={isChangingPassword}
+                        register={registerPassword}
+                        errors={passwordErrors}
+                        required
+                    />
+                    <div className="w-48">
+                        <Button
+                            outline
+                            disabled={isChangingPassword}
+                            label="更新密碼"
+                            onClick={handleSubmitPassword(onSubmitPassword)}
+                        />
+                    </div>
                 </div>
             </div>
         </Container>
