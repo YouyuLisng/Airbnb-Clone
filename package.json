@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test"
   },
   "prisma": {
@@ -56,6 +57,7 @@
     "@testing-library/react": "^16.3.3",
     "@types/bcrypt": "^5.0.0",
     "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "autoprefixer": "^10.4.16",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.30",

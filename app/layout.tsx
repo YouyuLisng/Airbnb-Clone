@@ -12,9 +12,36 @@ import './globals.css'
 import getCurrentUser from './actions/getCurrentUser';
 import { cn } from "@/app/libs/utils";
 
-export const metadata = {
-    title: 'GearShare',
-    description: '戶外裝備 P2P 租借市集',
+import type { Metadata } from 'next';
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const title = 'GearShare | 戶外裝備 P2P 租借市集';
+const description = '不用買、不用囤——在 GearShare 直接向附近的人租借帳篷、睡袋、相機等戶外裝備，或把自己用不到的裝備租出去賺點外快。';
+
+export const metadata: Metadata = {
+    metadataBase: new URL(baseUrl),
+    title: {
+        default: title,
+        template: '%s | GearShare',
+    },
+    description,
+    keywords: ['戶外裝備租借', '露營裝備', '帳篷出租', 'P2P 租賃', 'GearShare'],
+    openGraph: {
+        title,
+        description,
+        url: baseUrl,
+        siteName: 'GearShare',
+        locale: 'zh_TW',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+    },
+    icons: {
+        icon: '/favicon.ico',
+    },
 }
 
 // Also exposed as the --font-sans CSS variable (see globals.css) so
