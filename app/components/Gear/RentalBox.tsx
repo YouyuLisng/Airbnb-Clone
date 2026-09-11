@@ -1,15 +1,14 @@
 "use client";
 
-import { Range } from 'react-date-range'
-import Calendar from '../Input/Calendar';
+import Calendar, { DateRangeValue } from '../Input/Calendar';
 import Button from '../Button';
 
 interface RentalBoxProps {
     pricePerDay: number,
     depositAmount: number,
     totalPrice: number,
-    dateRange: Range,
-    onChangeDate: (value: Range) => void,
+    dateRange: DateRangeValue,
+    onChangeDate: (value: DateRangeValue) => void,
     onSubmit: () => void,
     disabled?: boolean,
     disabledDates: Date[]

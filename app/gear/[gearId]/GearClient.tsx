@@ -3,7 +3,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Range } from "react-date-range";
 import { useRouter, useSearchParams } from "next/navigation";
 import { differenceInDays, eachDayOfInterval } from 'date-fns';
 
@@ -15,6 +14,7 @@ import { categories } from "@/app/components/Navbar/Categories";
 import GearHead from "@/app/components/Gear/GearHead";
 import GearInfo from "@/app/components/Gear/GearInfo";
 import RentalBox from "@/app/components/Gear/RentalBox";
+import { DateRangeValue } from "@/app/components/Input/Calendar";
 
 const initialDateRange = {
     startDate: new Date(),
@@ -70,7 +70,7 @@ const GearClient: React.FC<GearClientProps> = ({
     }, [gear.category]);
 
     const [isLoading, setIsLoading] = useState(false);
-    const [dateRange, setDateRange] = useState<Range>(initialDateRange);
+    const [dateRange, setDateRange] = useState<DateRangeValue>(initialDateRange);
 
     // Derived purely from dateRange/gear.pricePerDay, so it's computed
     // directly instead of mirrored into its own state via an effect.
